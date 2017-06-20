@@ -191,16 +191,16 @@ public:
 		int h = heading;
 		switch(h) {
 		case Heading::nw:
-			legs[4]->up(dist,speed);
-			legs[2]->down(dist, speed);
-			legs[1]->backward(dist,speed);
-			legs[3]->forward(dist,speed);
+			leg4.up(dist,speed);
+			leg2.down(dist, speed);
+			leg1.backward(dist,speed);
+			leg3.backward(dist,speed);
 			break;
 		case Heading::ne:
-			legs[1]->up(dist,speed);
-			legs[3]->down(dist, speed);
-			legs[2]->backward(dist,speed);
-			legs[4]->forward(dist,speed);
+			leg1.up(dist,speed);
+			leg3.down(dist, speed);
+			leg2.backward(dist,speed);
+			leg4.backward(dist,speed);
 			break;
 		default :
 			break;

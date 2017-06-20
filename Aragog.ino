@@ -36,58 +36,100 @@ Leg leg4 = body.leg4;
 void walk2() {
 	uint8_t s = 2; //speed
 	int dlay = 50;
+	int8_t a1 = 40;
 
-	// Shift NorthWest
-	body.shift(Heading::nw, 40, s);
-	body.legs[2]->up(40,s);
+	// 1-1: Shift NorthWest
+	body.shift(Heading::nw, a1, s); seekTargets(dlay);
+
+	// 1-2: Step RR
+	body.leg2.up(a1,s); seekTargets(dlay);
+	body.leg2.forward(60,s); seekTargets(dlay);
+
+	// 1-3
+	body.leg2.down(0,s); seekTargets(dlay);
+
+	// 1-4
+
+	body.leg1.up(a1,s);
+	body.leg1.out(60,s);
+	body.leg3.up(a1,s);
+	body.leg3.forward(0,s); seekTargets(dlay);
+
+	// 1-5
+	body.leg1.up(a1,s); seekTargets(dlay);
+	body.leg1.forward(0,s); seekTargets(dlay);
+	body.leg1.out(80,s); seekTargets(dlay);
+
+
+	// 2-1 Start with Left Rear
+	body.shift(Heading::ne, 30, s);
 	seekTargets(dlay);
+
+	// 2-2
+	body.leg3.up(a1,s);seekTargets(dlay);
+	body.leg3.forward(60,s); seekTargets(dlay);
+
+	// 2-3
+	body.leg3.down(0,s); seekTargets(dlay);
+
+	// 2-4
+	body.leg2.up(a1,s);
+	body.leg4.down(a1,s);
+	body.leg2.forward(0,s); seekTargets(dlay);
+
+	// 2-5
+	body.leg4.up(a1,s); seekTargets(dlay);
+	body.leg4.forward(0,s); seekTargets(dlay);
+	body.leg4.out(80,s); seekTargets(dlay);
+
 }
 
 void walk(Leg RF, Leg RR, Leg LF, Leg LR) {
 
-  
 
   uint8_t s = 2;
-  int dlay = 50;
-
+  int dlay = 5;
+  int8_t a1 = 30;
 
 
   // =============== Step Left Rear
 
+  // 1:
   // Lean toward right front
-  RF.up(40,s);
-  LR.down(40,s);
+  RF.up(a1,s);
+  LR.down(a1,s);
   RR.up(20,s);
-  RR.backward(40, s);
-  LF.backward(40, s);;
+  RR.backward(a1, s);
+  LF.backward(a1, s); seekTargets(dlay);
 
+  // 2:
   // LR Up
-  LR.up(40,s);
-  seekTargets(dlay);
+  LR.up(40,s); seekTargets(dlay);
 
+  // 3:
   // LR forward
-  LR.forward(60, s);
-  seekTargets(dlay);
+  LR.forward(60, s); seekTargets(dlay);
 
-  LR.down(40,s);
-  seekTargets(dlay);
+  // 4:
+  LR.down(40,s); seekTargets(dlay);
 
+  // 5:
   // ================== Step Front Left
-  LF.up(40,s);
-  LF.out(60,s); // longstep
-  seekTargets(dlay);
+  LF.up(a1,s);
+  LF.forward(0,s); //TODO
+  LF.out(60,s); seekTargets(dlay);
 
+  // 6:
   // LF fowrward to 0
-  LF.forward(0,s);
-  seekTargets(dlay);
+  LF.forward(0,s); seekTargets(dlay);
 
-  LF.down(20,s);
-  seekTargets(dlay);
+  // 7:
+  LF.down(20,s); seekTargets(dlay);
 
+  // 8:
   // LF Down, LR lean and back to 0
-
-  LF.up(40,s);
-  RR.down(40,s);
+  LF.up(a1,s);
+  RR.down(a1,s);
   LR.up(0,s);
   RF.down(0,s);
   LR.backward(0,s);
@@ -108,18 +150,20 @@ void setup() {
 
  
 	delay(2000);
+	//walk2();
 
-	walk(leg1, leg2, leg4, leg3);
-	walk(leg4, leg3, leg1, leg2);
+	//walk(leg1, leg2, leg4, leg3);
+	//walk(leg4, leg3, leg1, leg2);
+
 
 }
 
 // The loop function is called in an endless loop
 void loop() {
-	/*
+
 	walk(leg1, leg2, leg4, leg3);
 	walk(leg4, leg3, leg1, leg2);
-	*/
+
 }
 
 void twist() {
