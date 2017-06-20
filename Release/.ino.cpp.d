@@ -22,7 +22,7 @@
  /Users/kevywilly/Documents/Arduino/libraries/Adafruit_PWMServoDriver/Adafruit_PWMServoDriver.h \
  /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/libraries/Wire/src/Wire.h \
  /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/cores/arduino/Stream.h \
- ../Aragog.ino
+ ../knee.h ../Aragog.ino
 
 /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/cores/arduino/Arduino.h:
 
@@ -73,5 +73,7 @@
 /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/libraries/Wire/src/Wire.h:
 
 /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/cores/arduino/Stream.h:
+
+../knee.h:
 
 ../Aragog.ino:

@@ -28,7 +28,7 @@ class Body {
 
 public:
 
-	Body(uint8T3_4 ids, floatT3_4 lengths);
+
 
 	Adafruit_PWMServoDriver pwm;
 
@@ -39,16 +39,6 @@ public:
 
 	Leg * legs[4];
 
-	/**
-	 * Begin by initializing PWM and all legs / joints to their target angles
-	 */
-	void begin();
-
-	/**
-		 * Set base angle = target
-		 */
-
-		void setBase();
 
 	void setCM(floatT3_4 cms) {
 		for(int i=0; i < 4; i++) {
@@ -56,50 +46,6 @@ public:
 		}
 	}
 
-	/**
-	 * Set targets for all legs using tuple
-	 */
-	void setTargets(int8T3_4 thetas);
-	void setTargets(int8T3_4 thetas, uint8_t speed);
-	void setTargetsInterpolation(int8T3_4 thetas, uint8T3_4 speed);
-
-	/**
-	 * Set deltas for all legs using tuple
-	 */
-	void setDeltas(int8T3_4 thetas);
-	void setDeltas(int8T3_4 thetas, uint8_t speed);
-	void setDeltasInterpolation(int8T3_4 pos, uint8T3_4 speed);
-
-	/**
-	 * Rest by turning off pwm
-	 */
-	void rest();
-
-	/**
-	 * void wakeup()
-	 * Go to previous targets
-	 */
-	void wakeup();
-
-	/**
-	 * Set offsets for all joints on all legs
-	 *
-	 * Example:
-	 * 	setOffsets({0,0,0},{0,0,0},{0,0,0},{0,0,0})
-	 */
-	void setOffsets(int8T3_4 offsets);
-
-	/**
-	 * void revertTargets()
-	 * reverts to previous target
-	 */
-	void revertTargets();
-
-	/**
-	 * void revertTargets(float speed)
-	 * reverts to previous target
-	 */
-	void revertTargets(float speed);
 
 	/**
 	 * seek targets on all legs
@@ -108,28 +54,136 @@ public:
 	void seekTargets() {
 		seekTargets(true);
 	}
-	void seekTargets(bool withDelay);
 
-	/**
-	 * Are targets reached?
-	 */
-	bool targetsReached();
 
-	/**
-	 * Go immediately to targets
-	 */
-	void gotoTargets();
 
-	/**
-	 * Go immediately to angles
-	 */
-	void gotoAngles(int8T3_4 thetas);
+	Body(uint8T3_4 ids, floatT3_4 lengths) :
+			pwm(), leg1(ids._1, lengths._1, &pwm), leg2(ids._2, lengths._2, &pwm), leg3(
+					ids._3, lengths._3, &pwm), leg4(ids._4, lengths._4, &pwm) {
+		legs[0] = &leg1;
+		legs[1] = &leg2;
+		legs[2] = &leg3;
+		legs[3] = &leg4;
 
-	void setOrientations(int8T3_4 orients) {
-			for(int i=0; i < 4; i++) {
-				legs[i]->setOrientations(orients.get(i));
-			}
+		for(int i=0; i < 4; i++) {
+			legs[i]->quadrant = i+1;
 		}
+	}
+
+	void begin() {
+		pwm.begin();
+
+	  pwm.setPWMFreq(DEFAULT_PWM_FREQUENCY);
+
+	  for (int i = 0; i < 4; i++) {
+	    legs[i]->begin();
+	  }
+	}
+
+	void setBase() {
+		for(int i=0; i < 4; i++) {
+			legs[i]->setBase();
+		}
+	}
+
+	void setTargets(int8T3_4 thetas) {
+		setTargets(thetas, Joint::DEFAULTSPEED);
+	}
+
+
+	void setTargets(int8T3_4 thetas, uint8_t speed) {
+
+		for(int i = 0; i < 4; i++) {
+			legs[i]->setTargets(thetas.get(i), speed);
+		}
+
+	}
+
+	void setTargetsInterpolation(int8T3_4 thetas, uint8T3_4 speed) {
+
+		for(int i = 0; i < 4; i++) {
+					legs[i]->setTargetsInterpolation(thetas.get(i), speed.get(i));
+				}
+	}
+
+	void setDeltas(int8T3_4 pos) {
+		setDeltas(pos, Joint::DEFAULTSPEED);
+	}
+
+	void setDeltas(int8T3_4 pos, uint8_t speed) {
+		for(int i = 0; i < 4; i++) {
+				legs[i]->setDeltas(pos.get(i), speed);
+			}
+	}
+
+	void setDeltasInterpolation(int8T3_4 thetas, uint8T3_4 speed) {
+
+		for(int i = 0; i < 4; i++) {
+						legs[i]->setDeltasInterpolation(thetas.get(i), speed.get(i));
+					}
+	}
+
+	void rest() {
+		for (int i = 0; i < 4; i++) {
+			legs[i]->rest();
+		}
+	}
+
+	void wakeup() {
+		for (int i = 0; i < 4; i++) {
+			legs[i]->wakeup();
+		}
+	}
+
+	void setOffsets(int8T3_4 offsets) {
+
+		for(int i = 0; i < 4; i++) {
+			legs[i]->setOffsets(offsets.get(i));
+		}
+
+	}
+
+	void revertTargets() {
+		for (int i = 0; i < 4; i++) {
+			legs[i]->revertTargets();
+		}
+	}
+
+	void revertTargets(float speed) {
+		for (int i = 0; i < 4; i++) {
+			legs[i]->revertTargets(speed);
+		}
+	}
+
+	void seekTargets(bool withDelay) {
+		for (int i = 0; i < 4; i++) {
+				legs[i]->seekTargets(false);
+			}
+
+		if(withDelay)
+			delayMicroseconds(Joint::SEEKDELAYMICROS);
+	}
+
+	bool targetsReached() {
+		for (int i = 0; i < 4; i++) {
+					if(!legs[i]->targetsReached()) {
+						return false;
+					}
+				}
+		return true;
+	}
+
+	void gotoTargets() {
+		for(int i=0; i < 4; i++) {
+			legs[i]->gotoTargets();
+		}
+	}
+
+	void gotoAngles(int8T3_4 thetas) {
+		for(int i=0; i < 4; i++) {
+			legs[i]->gotoAngles(thetas.get(i));
+		}
+	}
 
 };
 

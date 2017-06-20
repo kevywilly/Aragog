@@ -32,63 +32,79 @@ Leg leg2 = body.leg2;
 Leg leg3 = body.leg3;
 Leg leg4 = body.leg4;
 
+
+
+void walk(Leg RF, Leg RR, Leg LF, Leg LR) {
+
+  
+
+  uint8_t s = 2;
+  int dlay = 50;
+
+
+
+  // =============== Step Left Rear
+
+  // Lean toward right front
+  RF.up(40,s);
+  LR.down(40,s);
+  RR.up(40,s);
+  RR.backward(40, s);
+  LF.backward(40, s);;
+
+  // LR Up
+  LR.up(40,s);
+  seekTargets(dlay);
+
+  // LR forward
+  LR.forward(60, s);
+  seekTargets(dlay);
+
+  LR.down(40,s);
+  seekTargets(dlay);
+
+  // ================== Step Front Right
+  LF.up(40,s);
+  LF.out(60,s); // longstep
+  seekTargets(dlay);
+
+  // LF fowrward to 0
+  LF.forward(0,s);
+  seekTargets(dlay);
+
+  // LF Down, LR lean and back to 0
+  LF.down(0,s);
+  RR.down(20,s);
+  LR.up(40,s);
+  RF.down(40,s);
+  LR.backward(0,s);
+  seekTargets(dlay);
+
+  //RF.down(0,s);
+  //LR.down(0,s);
+  //seekTargets(dlay);
+
+}
 void setup() {
 
 	body.setOffsets(P_OFFSETS);
-	body.setTargets(P_WALK);
+	body.setTargets(P_STAND);
 	body.setBase();
 	body.begin();
 
-  delay(1000);
+ 
+	delay(2000);
 
+	walk(leg1, leg2, leg4, leg3);
 
-  // Shift for  1
-  body.setDeltas({{+00,	-45, -45},{-40, +00, +00}, {+00, +45, +45}, {-40, +00, +00}}, 25); seekTargets(1000);
-  // Step leg 1
-  body.leg1.setDeltas({-30,	+45, -45}); seekTargets(1000);
-  body.leg1.setDeltas({-30,	-45, -45}); seekTargets(1000);
-
-
-  // Unshift for leg 1
-  body.setDeltas({{-30,0,0},J0,J0,J0}, 25); seekTargets(1000);
-
-
-  /*
-	//body.leg1.setTargets({-20,80,30},100);
-	seekTargets();
-
-  delay(1000);
-  body.leg1.setDeltas({-30,45,-20},100);
-  seekTargets();
-  
-  delay(1000);
-  body.leg1.setDeltas({-30,0,-20},100);
-  seekTargets();
-
-  delay(1000);
-  */
-
-	
-	delay(10000);
-  body.setTargets(P_WALK);
-  seekTargets(0);
-	//body.rest();
-	
-  /*
-  delay(2000);
-
-  twist();
-
-  delay(2000);
-  body.rest();
-  */
-
-// Add your initialization code here
 }
 
 // The loop function is called in an endless loop
 void loop() {
-//Add your repeated code here
+	/*
+	walk(leg1, leg2, leg4, leg3);
+	walk(leg4, leg3, leg1, leg2);
+	*/
 }
 
 void twist() {

@@ -13,13 +13,13 @@
 
 class Knee {
 public:
-	Pos2D * coxa;
-	Pos2D * femur;
-	Pos2D * tibia;
+	Joint * coxa;
+	Joint * femur;
+	Joint * tibia;
 
 	float baseRadius;
 
-	Knee(Pos2D *pcoxa, Pos2D *pfemur, Pos2D *ptibia) {
+	Knee(Joint *pcoxa, Joint *pfemur, Joint *ptibia) {
 		coxa = pcoxa;
 		femur = pfemur;
 		tibia = ptibia;
@@ -38,17 +38,20 @@ public:
 		return femur->x;
 	}
 
-	void setVertical(float v, bool footVertical) {
-		femur->setX(v);
-		float dir = femur->x < 0 ? -1.0 : 1.0;
+	/**
+	 * Set vertical position of knee
+	 */
+	void setVertical(float v) {
 
-		if(footVertical) {
-			tibia->setX((getRadius()-baseRadius)*dir);
-		}
+		// adjust x pos of femur (vertical)
+		femur->setX(v);
+		// keep tibia vertical
+		tibia->setTheta(femur->theta);
+
 	}
 
-	void moveVertical(float dist, bool footVertical) {
-		setVertical(getVertical()+dist, footVertical);
+	void moveVertical(float dist) {
+		setVertical(getVertical()+dist);
 	}
 
 	void setHorizontal(float h) {
@@ -65,13 +68,21 @@ public:
 
 	void setXYZ(float x, float y, float z) {
 		setHorizontal(x);
-		setVertical(z,true);
-		tibia->moveX(y);
+		setVertical(z);
+		tibia->moveX(-y);
 	}
-	void setXZ(float x, float z, bool footVertical) {
+
+	void setX(float x) {
 		setHorizontal(x);
-		setVertical(z,footVertical);
 	}
+	void setZ(float z) {
+		setVertical(z);
+	}
+	void setY(float y) {
+		tibia->setTheta(femur->theta);
+		tibia->moveX(-y);
+	}
+
 
 };
 
