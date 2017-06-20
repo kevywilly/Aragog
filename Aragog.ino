@@ -33,6 +33,15 @@ Leg leg3 = body.leg3;
 Leg leg4 = body.leg4;
 
 
+void walk2() {
+	uint8_t s = 2; //speed
+	int dlay = 50;
+
+	// Shift NorthWest
+	body.shift(Heading::nw, 40, s);
+	body.legs[2]->up(40,s);
+	seekTargets(dlay);
+}
 
 void walk(Leg RF, Leg RR, Leg LF, Leg LR) {
 
@@ -48,7 +57,7 @@ void walk(Leg RF, Leg RR, Leg LF, Leg LR) {
   // Lean toward right front
   RF.up(40,s);
   LR.down(40,s);
-  RR.up(40,s);
+  RR.up(20,s);
   RR.backward(40, s);
   LF.backward(40, s);;
 
@@ -63,7 +72,7 @@ void walk(Leg RF, Leg RR, Leg LF, Leg LR) {
   LR.down(40,s);
   seekTargets(dlay);
 
-  // ================== Step Front Right
+  // ================== Step Front Left
   LF.up(40,s);
   LF.out(60,s); // longstep
   seekTargets(dlay);
@@ -72,13 +81,18 @@ void walk(Leg RF, Leg RR, Leg LF, Leg LR) {
   LF.forward(0,s);
   seekTargets(dlay);
 
+  LF.down(20,s);
+  seekTargets(dlay);
+
   // LF Down, LR lean and back to 0
-  LF.down(0,s);
-  RR.down(20,s);
-  LR.up(40,s);
-  RF.down(40,s);
+
+  LF.up(40,s);
+  RR.down(40,s);
+  LR.up(0,s);
+  RF.down(0,s);
   LR.backward(0,s);
   seekTargets(dlay);
+
 
   //RF.down(0,s);
   //LR.down(0,s);
@@ -96,6 +110,7 @@ void setup() {
 	delay(2000);
 
 	walk(leg1, leg2, leg4, leg3);
+	walk(leg4, leg3, leg1, leg2);
 
 }
 

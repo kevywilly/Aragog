@@ -24,6 +24,8 @@
 
 using namespace rt;
 
+enum Heading { n, s, e, w, nw, ne, se};
+
 class Body {
 
 public:
@@ -182,6 +184,26 @@ public:
 	void gotoAngles(int8T3_4 thetas) {
 		for(int i=0; i < 4; i++) {
 			legs[i]->gotoAngles(thetas.get(i));
+		}
+	}
+
+	void shift(Heading heading, float dist, uint8_t speed) {
+		int h = heading;
+		switch(h) {
+		case Heading::nw:
+			legs[4]->up(dist,speed);
+			legs[2]->down(dist, speed);
+			legs[1]->backward(dist,speed);
+			legs[3]->forward(dist,speed);
+			break;
+		case Heading::ne:
+			legs[1]->up(dist,speed);
+			legs[3]->down(dist, speed);
+			legs[2]->backward(dist,speed);
+			legs[4]->forward(dist,speed);
+			break;
+		default :
+			break;
 		}
 	}
 
