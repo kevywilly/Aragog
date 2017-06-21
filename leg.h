@@ -16,9 +16,11 @@
 #include <math.h>
 
 using namespace rt;
+
 class Leg {
 public:
 
+	int index;
 	Joint coxa;
 	Joint femur;
 	Joint tibia;
@@ -28,12 +30,16 @@ public:
 
 	Joint * joints[3];
 
-	Leg(uint8T3 ids, floatT3 lengths, Adafruit_PWMServoDriver * ppwm) :
+
+
+	Leg(int idx, uint8T3 ids, floatT3 lengths, Adafruit_PWMServoDriver * ppwm) :
 			coxa(ids._1, lengths._1, ppwm),
 			femur(ids._2, lengths._2, ppwm),
 			tibia(ids._3, lengths._3, ppwm),
 			knee(&coxa,  &femur, &tibia){
 
+		//body = pbody;
+		index = idx;
 		joints[0] = &coxa;
 		joints[1] = &femur;
 		joints[2] = &tibia;
@@ -187,6 +193,14 @@ public:
 		setKneeTargets(speed);
 	}
 
+	/**
+	 * Set yaw in radians
+	 */
+	void setYaw(float radians, uint8_t speed) {
+		knee.setTheta(radians);
+		setKneeTargets(speed);
+	}
+
 	inline void forward(float dist, uint8_t speed) {
 		setX(dist, speed);
 	}
@@ -220,6 +234,7 @@ public:
 	inline void out(float dist, uint8_t speed) {
 		setY(dist, speed);
 	}
+
 	void setY(float y, uint8_t speed) {
 		knee.setY(y);
 		setKneeTargets(speed);

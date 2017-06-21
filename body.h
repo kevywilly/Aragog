@@ -26,11 +26,11 @@ using namespace rt;
 
 enum Heading { n, s, e, w, nw, ne, se};
 
+class Body;
+
 class Body {
 
 public:
-
-
 
 	Adafruit_PWMServoDriver pwm;
 
@@ -42,26 +42,17 @@ public:
 	Leg * legs[4];
 
 
-	void setCM(floatT3_4 cms) {
-		for(int i=0; i < 4; i++) {
-			legs[i]->setCM(cms.get(i));
-		}
-	}
 
 
-	/**
-	 * seek targets on all legs
-	 * withDelay defaults to true
-	 */
-	void seekTargets() {
-		seekTargets(true);
-	}
 
 
 
 	Body(uint8T3_4 ids, floatT3_4 lengths) :
-			pwm(), leg1(ids._1, lengths._1, &pwm), leg2(ids._2, lengths._2, &pwm), leg3(
-					ids._3, lengths._3, &pwm), leg4(ids._4, lengths._4, &pwm) {
+			pwm(),
+			leg1(0, ids._1, lengths._1, &pwm),
+			leg2(1, ids._2, lengths._2, &pwm),
+			leg3(2,ids._3, lengths._3, &pwm),
+			leg4(3, ids._4, lengths._4, &pwm) {
 		legs[0] = &leg1;
 		legs[1] = &leg2;
 		legs[2] = &leg3;
@@ -80,6 +71,14 @@ public:
 	  for (int i = 0; i < 4; i++) {
 	    legs[i]->begin();
 	  }
+	}
+
+	/**
+	 * seek targets on all legs
+	 * withDelay defaults to true
+	 */
+	void seekTargets() {
+		seekTargets(true);
 	}
 
 	void setBase() {
@@ -187,25 +186,6 @@ public:
 		}
 	}
 
-	void shift(Heading heading, float dist, uint8_t speed) {
-		int h = heading;
-		switch(h) {
-		case Heading::nw:
-			leg4.up(dist,speed);
-			leg2.down(dist, speed);
-			leg1.backward(dist,speed);
-			leg3.backward(dist,speed);
-			break;
-		case Heading::ne:
-			leg1.up(dist,speed);
-			leg3.down(dist, speed);
-			leg2.backward(dist,speed);
-			leg4.backward(dist,speed);
-			break;
-		default :
-			break;
-		}
-	}
 
 };
 

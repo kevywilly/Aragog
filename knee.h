@@ -26,7 +26,7 @@ public:
 		baseRadius = getRadius();
 	}
 
-	float getRadius() const{
+	inline float getRadius() const{
 		return coxa->radius+femur->y;
 	}
 
@@ -50,18 +50,23 @@ public:
 
 	}
 
-	void moveVertical(float dist) {
+	inline void moveVertical(float dist) {
 		setVertical(getVertical()+dist);
 	}
 
+	void setTheta(float theta) {
+		Pos2D p = Pos2D(getRadius(), coxa->rads);
+		p.setTheta(theta);
+		coxa->setTheta(p.theta);
+	}
 	void setHorizontal(float h) {
-		Pos2D p = Pos2D(coxa->radius+femur->y, coxa->rads);
+		Pos2D p = Pos2D(getRadius(), coxa->rads);
 		p.setX(h);
 		coxa->setTheta(p.theta);
 	}
 	void moveHorizontal(float dist) {
 
-		Pos2D p = Pos2D(coxa->radius+femur->y, coxa->rads);
+		Pos2D p = Pos2D(getRadius(), coxa->rads);
 		setHorizontal(p.x + dist);
 
 	}
@@ -72,12 +77,13 @@ public:
 		tibia->moveX(-y);
 	}
 
-	void setX(float x) {
+	inline void setX(float x) {
 		setHorizontal(x);
 	}
-	void setZ(float z) {
+	inline void setZ(float z) {
 		setVertical(z);
 	}
+
 	void setY(float y) {
 		tibia->setTheta(femur->theta);
 		tibia->moveX(-y);
