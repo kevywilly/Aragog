@@ -11,6 +11,7 @@ void setup() {
 
  
 	delay(2000);
+	walk(Heading::North, 8, 8);
 	//walk2();
 
 }
@@ -18,7 +19,7 @@ void setup() {
 // The loop function is called in an endless loop
 void loop() {
 
-	walk(NORTH, 8);
+	//walk(Heading::North, 8, 10);
 	delay(50);
 
 }

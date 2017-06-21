@@ -21,14 +21,12 @@
 #define SONAR_MAX_DISTANCE 500
 #define SONAR_TOO_CLOSE 30
 
-#define NORTH 1
-#define EAST 2
-#define SOUTH 3
-#define WEST 4
 
 #define diag(x) (x ^ 2)
-#define lft(x) (x ^ 1 ^ 2)
-#define rgt(x) (x ^ 1)
+#define lft(x) ((x-1 < 0 ? 3 : x-1))
+#define rgt(x) ((x+1 > 3 ? 0 : x+1))
+
+enum Heading { North, South, East, West };
 
 const int8T3_4 P_STAND = int8T3( { 0, 0, 0 }).toT3_4();
 const int8T3_4 P_WALK = int8T3( { 0, 30, 30 }).toT3_4();
@@ -39,7 +37,6 @@ const uint8T3_4 JOINT_IDS = { { 0, 4, 8 }, { 1, 5, 9 }, { 2, 6, 10 },
 		{ 3, 7, 11 } };
 const int8T3_4 ORIENTATIONS = { { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 },
 		{ 1, 1, 1 } };
-
 const int8T3 J0 = { 0, 0, 0 };
 
 Sonar sonar(SONAR_TRIGGER_PIN, SONAR_ECHO_PIN, SONAR_MAX_DISTANCE,
@@ -57,7 +54,6 @@ Leg leg4 = body.leg4;
 void seekTargets(long del);
 void turn(float degrees, uint8_t speed);
 void turnIfTooClose();
-void execWalk(Leg RF, Leg RR, Leg LF, Leg LR, uint8_t speed);
 bool walk(uint8_t dir, uint8_t speed);
 inline Leg opposite(Leg l);
 inline Leg leftOf(Leg l);
@@ -67,15 +63,15 @@ inline Leg rightOf(Leg l);
  * Function Implementations
  */
 inline Leg opposite(Leg l) {
-	return *body.legs[l.index ^ 2];
+	return *body.legs[diag(l.index)];
 }
 
 inline Leg rightOf(Leg l) {
-	return *body.legs[l.index ^ 1];
+	return *body.legs[rgt(l.index)];
 }
 
 inline Leg leftOf(Leg l) {
-	return *body.legs[l.index ^ 1 ^ 2];
+	return *body.legs[lft(l.index)];
 }
 void seekTargets(long del) {
 	int count = 0;
@@ -99,77 +95,59 @@ void turnIfTooClose() {
 	}
 }
 
-bool walk2(uint8_t dir, uint8_t speed) {
 
-	uint8_t leg_no;
-	switch (dir) {
-	case 1:
-		leg_no = 3;
-		break;
-	case 2:
-		leg_no = 4;
-		break;
-	case 3:
-		leg_no = 1;
-		break;
-	default:
-		leg_no = 2;
-	}
-
-	int f = leg_no - 1;
-	Leg LR = *body.legs[f];
-	Leg LF = *body.legs[f ^ 1];
-	Leg RF = *body.legs[f ^ 2];
-	Leg RR = *body.legs[(f ^ 1) ^ 2];
-
-	turnIfTooClose();
-	execWalk(RF, RR, LF, LR, speed);
-	turnIfTooClose();
-	execWalk(LF, LR, RF, RR, speed);
-
-	return true;
-}
 // walk2(3,4)
-bool walk(uint8_t dir, uint8_t speed) {
+bool walk(Heading heading, uint8_t speed, int dlay) {
 
-	uint8_t s = speed;
-	int dlay = 10;
 
-	int8_t vLean = 25;
-	int8_t hLean = 20;
-	int8_t a1 = 25;
-	int8_t a2 = 20;
+	float vLean = 25;
+	float vLeanToHLean = 0.8;
 
-	int leg_index;
+	float vStep = 40;
+	float vStepToBigHStep = 2.0;
+	float vStepToSmallHStep = 0.625;
+	float reach = 90.0;
 
-	switch (dir) {
-	case 1:
-		leg_index = 2;
+	int leg_index[4];
+
+	switch (int(heading)) {
+	default: // North
+		leg_index[0] = 1;
+		leg_index[1] = 0;
+		leg_index[2] = 2;
+		leg_index[3] = 3;
 		break;
-	case 2:
-		leg_index = 3;
+	/*
+	case Heading::East: // East
+		leg_index[0] = 3;
+		leg_index[1] = 2;
 		break;
-	case 3:
-		leg_index = 0;
+	case Heading::South: // South
+		leg_index[0] = 0;
+		leg_index[1] = 3;
 		break;
-	default:
-		leg_index = 1;
+	default: // West
+		leg_index[0] = 1;
+		leg_index[1] = 0;
+		*/
 	}
 
-	Leg leg = *body.legs[leg_index];
+	for(int j=0; j < 2; j+=2) {
 
-	turnIfTooClose();
+	//turnIfTooClose();
 
+	// ============== Step with the first leg
+	Leg steppingLeg = *body.legs[leg_index[j]];
 
 	// 1: SHIFT WEIGHT FOR FIRST STEP
 
 	// lean away from stepping leg
-	leg.down(vLean, s * 2);
-	opposite(leg).up(vLean, s * 2);
+	steppingLeg.down(vLean, speed * 2);
+	opposite(steppingLeg).up(vLean, speed * 2);
 
 	// move adjacent legs toward stepping leg
-	leftOf(leg).backward(hLean, s * 2);
-	rightOf(leg).backward(hLean, s * 2);
+	leftOf(steppingLeg).backward(vLean*vLeanToHLean, speed * 2);
+	rightOf(steppingLeg).backward(vLean*vLeanToHLean, speed * 2);
 
 	//leftOf(leg).up(20, s * 2);
 	seekTargets(dlay);
@@ -177,42 +155,54 @@ bool walk(uint8_t dir, uint8_t speed) {
 	// 2: EXECUTE STEP OF FIRST LEG
 
 	// raise the leg
-	leg.up(40, s); seekTargets(dlay);
+	steppingLeg.up(vStep, speed); seekTargets(dlay);
 
 	// move the leg forward
-	leg.forward(80, s); seekTargets(dlay);
+	steppingLeg.forward(vStep*vStepToBigHStep, speed); seekTargets(dlay);
 
 	// bring the leg down
-	leg.down(vLean, s); seekTargets(dlay);
+	steppingLeg.down(vLean, speed); seekTargets(dlay);
 
+	// ============= step with the second leg ============
 
-	// 5: Raise adjacent right (clockwise) leg
+	steppingLeg = *body.legs[leg_index[j+1]];
+
+	// 3: Change stepping leg to the Right Adjacent leg
 
 	// raise adjacent leg
-	rightOf(leg).up(vLean, s);
+	steppingLeg.up(vLean, speed);
 	// reach out with adjacent leg
-	rightOf(leg).out(90, s); seekTargets(dlay);
+	steppingLeg.out(reach, speed); seekTargets(dlay);
 
-	// 6: complete the step
+	// 4: complete the step
 
-	// shift slightly toward adjacent left leg
-	leftOf(leg).up(vLean / 2.0, s);
-	rightOf(leg).forward(30, s); //seekTargets(dlay);
-	rightOf(leg).out(90, s);
-	leftOf(leg).down(20, s);
+	// turn stepping leg forward and reach out big
+	steppingLeg.forward(vStep*vStepToSmallHStep, speed);
+	steppingLeg.out(reach, speed);
 
-	leg.down(20, s);
-	opposite(leg).down(20, s);
-	leg.backward(0, s);
+	// lean toward stepping leg by leaning away from opposite leg
+	//opposite(steppingLeg).up(vLean / 2.0, s);
+	opposite(steppingLeg).down(vLean*0.8, speed);
+
+	// raise up the body by pushing left of and right of legs down
+	leftOf(steppingLeg).down(vLean*0.8, speed);
+	rightOf(steppingLeg).down(vLean*0.8, speed);
+
+	// move the original (left of stepping leg back) to zero horizontal
+	leftOf(steppingLeg).backward(0, speed);
+
 	seekTargets(dlay);
 
 	// 7:
-	rightOf(leg).up(20, s); //seekTargets(dlay);
-	leftOf(leg).down(20, s);
-	leg.down(0, s);
-	opposite(leg).down(30, s);
+	// fall into stepping leg on the ground by bending the knee, and pushing the opposite leg down
+	steppingLeg.up(20, speed);
+	opposite(steppingLeg).down(vLean, speed);
 
+	// bring left of stepping leg back down to 0
+	leftOf(steppingLeg).down(0, speed);
+	rightOf(steppingLeg).down(vLean*1.2, speed);  // TODO maybe zero?
 	seekTargets(dlay);
+	}
 
 	return true;
 }

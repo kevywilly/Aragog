@@ -24,7 +24,7 @@
 
 using namespace rt;
 
-enum Heading { n, s, e, w, nw, ne, se};
+
 
 class Body;
 
