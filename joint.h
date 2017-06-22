@@ -9,7 +9,7 @@
 #define JOINT_H_
 
 #include <Adafruit_PWMServoDriver.h>
-#include <RoboTools.h>
+#include "RoboTools.h"
 #include <Wire.h>
 
 using namespace rt;

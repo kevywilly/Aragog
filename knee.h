@@ -19,6 +19,7 @@ public:
 
 	float baseRadius;
 
+	// Create knee with coxa, femur and tibia
 	Knee(Joint *pcoxa, Joint *pfemur, Joint *ptibia) {
 		coxa = pcoxa;
 		femur = pfemur;
@@ -26,70 +27,65 @@ public:
 		baseRadius = getRadius();
 	}
 
-	inline float getRadius() const{
-		return coxa->radius+femur->y;
-	}
+	float getRadius() const{
+			return coxa->radius+femur->y;
+		}
 
-	float getHorizontal() const {
-		Pos2D p = Pos2D(coxa->radius+femur->y, coxa->rads);
-		return p.x;
-	}
-	float getVertical() const {
-		return femur->x;
-	}
+		float getX() const {
+			Pos2D p = Pos2D(getRadius(), 0);
+			p.setTheta(coxa->theta);
+			return p.x;
+		}
 
-	/**
-	 * Set vertical position of knee
-	 */
-	void setVertical(float v) {
+		float getY() const {
+			return getRadius() + tibia->x;
+		}
 
-		// adjust x pos of femur (vertical)
-		femur->setX(v);
-		// keep tibia vertical
-		tibia->setTheta(femur->theta);
+		float getZ() const {
+			return femur->x;
+		}
 
-	}
+		void setX(float cm) {
+			Pos2D p = Pos2D(getRadius(), 0);
+			p.setX(cm);
+			coxa->setTheta(p.theta);
+		}
 
-	inline void moveVertical(float dist) {
-		setVertical(getVertical()+dist);
-	}
+		void setY(float cm) {
+			tibia->setX(cm);
+		}
 
-	void setTheta(float theta) {
-		Pos2D p = Pos2D(getRadius(), coxa->rads);
-		p.setTheta(theta);
-		coxa->setTheta(p.theta);
-	}
-	void setHorizontal(float h) {
-		Pos2D p = Pos2D(getRadius(), coxa->rads);
-		p.setX(h);
-		coxa->setTheta(p.theta);
-	}
-	void moveHorizontal(float dist) {
-
-		Pos2D p = Pos2D(getRadius(), coxa->rads);
-		setHorizontal(p.x + dist);
-
-	}
-
-	void setXYZ(float x, float y, float z) {
-		setHorizontal(x);
-		setVertical(z);
-		tibia->moveX(-y);
-	}
-
-	inline void setX(float x) {
-		setHorizontal(x);
-	}
-	inline void setZ(float z) {
-		setVertical(z);
-	}
-
-	void setY(float y) {
-		tibia->setTheta(femur->theta);
-		tibia->moveX(-y);
-	}
+		void setZ(float cm) {
+			femur->setX(cm);
+			tibia->setTheta(femur->theta);
+		}
 
 
+
+		void moveX(float dist) {
+
+			Pos2D p = Pos2D(getRadius(), 0);
+			setX(p.x + dist);
+
+		}
+
+		void setXYZ(float x, float y, float z) {
+			setX(x);
+			setZ(z);
+			tibia->moveX(-y);
+		}
+
+		void setYaw(float radians) {
+			coxa->setTheta(radians);
+		}
+
+		int8T3 getTargets(int quadrant) {
+			int8T3 targets = {};
+			targets._1 = round((quadrant < 3) ? - (coxa->theta * TO_DEG) : (coxa->theta * TO_DEG));
+			targets._2 = round(femur->theta * TO_DEG);
+			targets._3 = round(tibia->theta * TO_DEG);
+			return targets;
+		}
 };
 
 

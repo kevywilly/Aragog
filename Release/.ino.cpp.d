@@ -13,12 +13,14 @@
  /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/cores/arduino/USBCore.h \
  /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/variants/micro/pins_arduino.h \
  /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/variants/micro/../leonardo/pins_arduino.h \
- ../Aragog.h ../constants.h ../body.h \
+ ../Aragog.h \
  /Users/kevywilly/Documents/Robotics/workspace/RoboTools/RoboTools.h \
  /Users/kevywilly/Documents/Robotics/workspace/RoboTools/robotools/rttypes.h \
  /Users/kevywilly/Documents/Robotics/workspace/RoboTools/robotools/rtangles.h \
  /Users/kevywilly/Documents/Robotics/workspace/RoboTools/robotools/rttypes.h \
- ../leg.h ../joint.h \
+ /Users/kevywilly/Documents/Robotics/workspace/RoboTools/robotools/pos2d.h \
+ /Users/kevywilly/Documents/Robotics/workspace/RoboTools/robotools/rtangles.h \
+ ../constants.h ../body.h ../leg.h ../joint.h \
  /Users/kevywilly/Documents/Arduino/libraries/Adafruit_PWMServoDriver/Adafruit_PWMServoDriver.h \
  /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/libraries/Wire/src/Wire.h \
  /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/cores/arduino/Stream.h \
@@ -56,10 +58,6 @@
 
 ../Aragog.h:
 
-../constants.h:
-
-../body.h:
-
 /Users/kevywilly/Documents/Robotics/workspace/RoboTools/RoboTools.h:
 
 /Users/kevywilly/Documents/Robotics/workspace/RoboTools/robotools/rttypes.h:
@@ -67,6 +65,14 @@
 /Users/kevywilly/Documents/Robotics/workspace/RoboTools/robotools/rtangles.h:
 
 /Users/kevywilly/Documents/Robotics/workspace/RoboTools/robotools/rttypes.h:
+
+/Users/kevywilly/Documents/Robotics/workspace/RoboTools/robotools/pos2d.h:
+
+/Users/kevywilly/Documents/Robotics/workspace/RoboTools/robotools/rtangles.h:
+
+../constants.h:
+
+../body.h:
 
 ../leg.h:
 

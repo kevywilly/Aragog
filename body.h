@@ -7,8 +7,8 @@
 
 #ifndef BODY_H_
 #define BODY_H_
-#include <RoboTools.h>
 #include "Arduino.h"
+#include "RoboTools.h"
 #include "constants.h"
 #include "leg.h"
 #include <Adafruit_PWMServoDriver.h>
@@ -42,25 +42,17 @@ public:
 	Leg * legs[4];
 
 
-
-
-
-
-
 	Body(uint8T3_4 ids, floatT3_4 lengths) :
 			pwm(),
-			leg1(0, ids._1, lengths._1, &pwm),
-			leg2(1, ids._2, lengths._2, &pwm),
-			leg3(2,ids._3, lengths._3, &pwm),
-			leg4(3, ids._4, lengths._4, &pwm) {
+			leg1(0, ids._1, lengths._1, 1, &pwm),
+			leg2(1, ids._2, lengths._2, 2, &pwm),
+			leg3(2,ids._3, lengths._3, 3, &pwm),
+			leg4(3, ids._4, lengths._4, 4, &pwm) {
 		legs[0] = &leg1;
 		legs[1] = &leg2;
 		legs[2] = &leg3;
 		legs[3] = &leg4;
 
-		for(int i=0; i < 4; i++) {
-			legs[i]->quadrant = i+1;
-		}
 	}
 
 	void begin() {
@@ -186,6 +178,11 @@ public:
 		}
 	}
 
+	void resetQuadrants() {
+		for(int i=0; i < 4; i++) {
+			legs[i]->resetQuadrant();
+		}
+	}
 
 };
 

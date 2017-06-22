@@ -8,8 +8,8 @@
 #ifndef LEG_H_
 #define LEG_H_
 
-#include <RoboTools.h>
 #include "Arduino.h"
+#include "RoboTools.h"
 #include "joint.h"
 #include <Adafruit_PWMServoDriver.h>
 #include "knee.h"
@@ -27,12 +27,11 @@ public:
 	Knee knee;
 
 	int8_t quadrant;
+	int8_t original_quadrant;
 
 	Joint * joints[3];
 
-
-
-	Leg(int idx, uint8T3 ids, floatT3 lengths, Adafruit_PWMServoDriver * ppwm) :
+	Leg(int idx, uint8T3 ids, floatT3 lengths, uint8_t quad, Adafruit_PWMServoDriver * ppwm) :
 			coxa(ids._1, lengths._1, ppwm),
 			femur(ids._2, lengths._2, ppwm),
 			tibia(ids._3, lengths._3, ppwm),
@@ -43,7 +42,8 @@ public:
 		joints[0] = &coxa;
 		joints[1] = &femur;
 		joints[2] = &tibia;
-		quadrant = 1;
+		quadrant = quad;
+		original_quadrant = quad;
 
 	}
 
@@ -183,24 +183,6 @@ public:
 	}
 
 
-	/**
-	 * Set XYZ position of leg (knee and foot)
-	 */
-	void setXYZ(float x, float y, float z, uint8_t speed) {
-
-		knee.setXYZ(x,y,z);
-
-		setKneeTargets(speed);
-	}
-
-	/**
-	 * Set yaw in radians
-	 */
-	void setYaw(float radians, uint8_t speed) {
-		knee.setTheta(radians);
-		setKneeTargets(speed);
-	}
-
 	inline void forward(float dist, uint8_t speed) {
 		setX(dist, speed);
 	}
@@ -209,47 +191,57 @@ public:
 		setX(-dist, speed);
 	}
 
-	void setX(float x, uint8_t speed) {
-		knee.setX(x);
-		setKneeTargets(speed);
-	}
-
-	inline void up(float dist, uint8_t speed) {
-		setZ(dist, speed);
-	}
-
-	inline void down(float dist, uint8_t speed) {
-			setZ(-dist, speed);
-	}
-
-	void setZ(float z, uint8_t speed) {
-		knee.setZ(z);
-		setKneeTargets(speed);
-	}
-
 	inline void in(float dist, uint8_t speed) {
-		setY(-dist, speed);
-	}
-
-	inline void out(float dist, uint8_t speed) {
 		setY(dist, speed);
 	}
 
-	void setY(float y, uint8_t speed) {
-		knee.setY(y);
-		setKneeTargets(speed);
+	inline void out(float dist, uint8_t speed) {
+		setY(-dist, speed);
 	}
 
-	void setKneeTargets(uint8_t speed) {
-		int8_t acoxa = round(knee.coxa->theta*TO_DEG);
-		int8_t afemur = round(knee.femur->theta*TO_DEG);
-		int8_t atibia = round(knee.tibia->theta*TO_DEG);
+	inline void up(float cm, uint8_t speed) {
+		setZ(cm, speed);
+	}
 
-		if(quadrant < 3) {
-			acoxa *= -1;
+	inline void down(float cm, uint8_t speed) {
+		setZ(-cm, speed);
+	}
+
+	void setX(float cm, int8_t speed) {
+		knee.setX(cm);
+		setTargets(knee.getTargets(this->quadrant),speed);
+	}
+
+	void setY(float cm, uint8_t speed) {
+			knee.setY(cm);
+			setTargets(knee.getTargets(this->quadrant),speed);
 		}
-		setTargets({acoxa,afemur,atibia}, speed);
+
+	void setZ(float cm, int8_t speed) {
+		knee.setZ(cm);
+		setTargets(knee.getTargets(this->quadrant),speed);
 	}
+	/**
+	 * Set XYZ position of leg (knee and foot)
+	 */
+	void setXYZ(float cm_x, float cm_y, float cm_z, uint8_t speed) {
+		knee.setXYZ(cm_x,cm_y,cm_z);
+		setTargets(knee.getTargets(this->quadrant),speed);
+	}
+
+	/**
+	 * Set yaw in radians
+	 */
+	void setYaw(float radians, uint8_t speed) {
+		knee.setYaw(radians);
+		setTargets(knee.getTargets(this->quadrant),speed);
+	}
+
+
+	void resetQuadrant() {
+		quadrant = original_quadrant;
+	}
+
 
 
 };
