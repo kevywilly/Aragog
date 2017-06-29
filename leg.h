@@ -17,8 +17,12 @@
 
 using namespace rt;
 
+
+
 class Leg {
 public:
+
+	enum Side {Left, Right};
 
 	int index;
 	Joint coxa;
@@ -31,11 +35,10 @@ public:
 
 	Joint * joints[3];
 
-	Leg(int idx, uint8T3 ids, floatT3 lengths, uint8_t quad, Adafruit_PWMServoDriver * ppwm) :
-			coxa(ids._1, lengths._1, ppwm),
-			femur(ids._2, lengths._2, ppwm),
-			tibia(ids._3, lengths._3, ppwm),
-			knee(&coxa,  &femur, &tibia){
+	Leg(int idx, uint8T3 ids, floatT3 lengths, uint8_t quad,
+			Adafruit_PWMServoDriver * ppwm) :
+			coxa(ids._1, lengths._1, ppwm), femur(ids._2, lengths._2, ppwm), tibia(
+					ids._3, lengths._3, ppwm), knee(&coxa, &femur, &tibia) {
 
 		//body = pbody;
 		index = idx;
@@ -47,25 +50,38 @@ public:
 
 	}
 
-	void begin(){
+	/**
+	 * Begin by initializing all joints
+	 */
+	void begin() {
 		for (int i = 0; i < 3; i++) {
-				joints[i]->begin();
-			}
+			joints[i]->begin();
+		}
+	}
+
+	/**
+	 * Side of the body the leg is on currently;
+	 */
+	Side side() {
+		if(quadrant > 2)
+			return Side::Left;
+		else
+			return Side::Right;
 	}
 
 	/**
 	 * Set base angle = target
 	 */
-	void setBase() {
+	void setTargetsAsHome() {
 
 		for (int i = 0; i < 3; i++) {
-				joints[i]->setBase();
-			}
+			joints[i]->setTargetsAsHome();
+		}
 	}
 
 	/**
-		 * Is target reached for all joints?
-		 */
+	 * Is target reached for all joints?
+	 */
 	bool targetsReached() {
 		for (int i = 0; i < 3; i++) {
 			if (!joints[i]->targetReached()) {
@@ -79,48 +95,35 @@ public:
 		setTargets(thetas, Joint::DEFAULTSPEED);
 	}
 
-	void setDeltas(int8T3 thetas) {
-		setDeltas(thetas, Joint::DEFAULTSPEED);
-	}
+
 
 	void setTargets(int8T3 thetas, uint8_t speed) {
-		for(int i = 0; i < 3; i++) {
-				joints[i]->setTarget(thetas.get(i), speed);
+		for (int i = 0; i < 3; i++) {
+			joints[i]->setTarget(thetas.get(i), speed);
 		}
 	}
 
-	void setDeltas(int8T3 thetas, uint8_t speed) {
-		for(int i = 0; i < 3; i++) {
-					joints[i]->setDelta(thetas.get(i), speed);
-			}
-	}
 
 	int8T3 getDeltas() {
 		return {coxa.getDelta(), femur.getDelta(), coxa.getDelta()};
 	}
 	void setTargetsInterpolation(int8T3 thetas, uint8T3 speeds) {
 
-		for(int i = 0; i < 3; i++) {
-					joints[i]->setTarget(thetas.get(i), speeds.get(i));
-			}
+		for (int i = 0; i < 3; i++) {
+			joints[i]->setTarget(thetas.get(i), speeds.get(i));
+		}
 
-	}
-
-	void setDeltasInterpolation(int8T3 thetas, uint8T3 speeds) {
-		for(int i = 0; i < 3; i++) {
-						joints[i]->setDelta(thetas.get(i), speeds.get(i));
-				}
 	}
 
 	void seekTargets() {
-			seekTargets(true);
-		}
+		seekTargets(true);
+	}
 
 	void seekTargets(bool withDelay) {
 		for (int i = 0; i < 3; i++) {
 			joints[i]->seekTarget(false);
 		}
-		if(withDelay)
+		if (withDelay)
 			delayMicroseconds(Joint::SEEKDELAYMICROS);
 	}
 
@@ -132,9 +135,9 @@ public:
 
 	void gotoAngles(int8T3 thetas) {
 
-		for(int i = 0; i < 3; i++) {
-						joints[i]->gotoAngle(thetas.get(i));
-				}
+		for (int i = 0; i < 3; i++) {
+			joints[i]->gotoAngle(thetas.get(i));
+		}
 	}
 
 	void rest() {
@@ -151,37 +154,26 @@ public:
 
 	void setOffsets(int8T3 offsets) {
 
-		for(int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			joints[i]->setOffset(offsets.get(i));
 		}
 	}
 
-	void revertTargets() {
-		for (int i = 0; i < 3; i++) {
-			joints[i]->revertTarget();
-		}
-	}
-
-	/**
-	 * Revert targets
-	 */
-	void revertTargets(uint8_t speed) {
-		for (int i = 0; i < 3; i++) {
-			joints[i]->revertTarget(speed);
-		}
-
-	}
 
 
+	 void goHome(uint8_t speed) {
+			 for(int i=0; i < 3; i++) {
+				 joints[i]->goHome(speed);
+			 }
+		 }
 	/**
 	 * Set length in centimeters for all joints in leg
 	 */
 	void setCM(floatT3 cms) {
-		for(int i=0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			joints[i]->setCM(cms.get(i));
 		}
 	}
-
 
 	inline void forward(float dist, uint8_t speed) {
 		setX(dist, speed);
@@ -207,26 +199,40 @@ public:
 		setZ(-cm, speed);
 	}
 
-	void setX(float cm, int8_t speed) {
+	void setX(float cm, uint8_t speed) {
 		knee.setX(cm);
-		setTargets(knee.getTargets(this->quadrant),speed);
+		setTargets(knee.getTargets(this->quadrant), speed);
+	}
+
+	void moveX(float cm, uint8_t speed) {
+		setX(cm + knee.getX(), speed);
 	}
 
 	void setY(float cm, uint8_t speed) {
-			knee.setY(cm);
-			setTargets(knee.getTargets(this->quadrant),speed);
-		}
+		knee.setY(cm);
+		setTargets(knee.getTargets(this->quadrant), speed);
+	}
 
+	void moveZ(float cm, uint8_t speed) {
+		knee.setZ(cm + knee.getZ());
+		setTargets(knee.getTargets(this->quadrant), speed);
+	}
 	void setZ(float cm, int8_t speed) {
 		knee.setZ(cm);
-		setTargets(knee.getTargets(this->quadrant),speed);
+		setTargets(knee.getTargets(this->quadrant), speed);
+	}
+
+	// set x and z coordinates
+	void setXZ(float x, float z, int8_t speed) {
+		knee.setXZ(x,z);
+		setTargets(knee.getTargets(this->quadrant), speed);
 	}
 	/**
 	 * Set XYZ position of leg (knee and foot)
 	 */
 	void setXYZ(float cm_x, float cm_y, float cm_z, uint8_t speed) {
-		knee.setXYZ(cm_x,cm_y,cm_z);
-		setTargets(knee.getTargets(this->quadrant),speed);
+		knee.setXYZ(cm_x, cm_y, cm_z);
+		setTargets(knee.getTargets(this->quadrant), speed);
 	}
 
 	/**
@@ -234,14 +240,12 @@ public:
 	 */
 	void setYaw(float radians, uint8_t speed) {
 		knee.setYaw(radians);
-		setTargets(knee.getTargets(this->quadrant),speed);
+		setTargets(knee.getTargets(this->quadrant), speed);
 	}
-
 
 	void resetQuadrant() {
 		quadrant = original_quadrant;
 	}
-
 
 
 };

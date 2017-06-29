@@ -28,7 +28,7 @@ public:
 	}
 
 	float getRadius() const{
-			return coxa->radius+femur->y;
+			return this->coxa->radius+this->femur->y;
 		}
 
 		float getX() const {
@@ -56,22 +56,22 @@ public:
 		}
 
 		void setZ(float cm) {
-			femur->setX(cm);
+			this->femur->setX(cm);
 			tibia->setTheta(femur->theta);
 		}
 
-
-
 		void moveX(float dist) {
-
 			Pos2D p = Pos2D(getRadius(), 0);
 			setX(p.x + dist);
-
 		}
 
-		void setXYZ(float x, float y, float z) {
-			setX(x);
+		void setXZ(float x, float z) {
 			setZ(z);
+			setX(x);
+		}
+		void setXYZ(float x, float y, float z) {
+			setZ(z);
+			setX(x);
 			tibia->moveX(-y);
 		}
 
@@ -80,10 +80,10 @@ public:
 		}
 
 		int8T3 getTargets(int quadrant) {
-			int8T3 targets = {};
-			targets._1 = round((quadrant < 3) ? - (coxa->theta * TO_DEG) : (coxa->theta * TO_DEG));
-			targets._2 = round(femur->theta * TO_DEG);
-			targets._3 = round(tibia->theta * TO_DEG);
+			int8T3 targets = {0,0,0};
+			targets._1 = round((quadrant < 3) ? - (coxa->relativeTheta() * TO_DEG) : (coxa->relativeTheta() * TO_DEG));
+			targets._2 = round(femur->relativeTheta() * TO_DEG);
+			targets._3 = round(tibia->relativeTheta() * TO_DEG);
 			return targets;
 		}
 };

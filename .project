@@ -37,11 +37,6 @@
 			<location>/Users/kevywilly/Documents/Arduino/libraries/Adafruit_PWMServoDriver</location>
 		</link>
 		<link>
-			<name>ArduinoThread</name>
-			<type>2</type>
-			<location>/Users/kevywilly/Documents/Arduino/libraries/ArduinoThread</location>
-		</link>
-		<link>
 			<name>NewPing</name>
 			<type>2</type>
 			<location>/Users/kevywilly/Documents/Arduino/libraries/NewPing</location>

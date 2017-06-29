@@ -17,14 +17,6 @@ RM := rm -f
 -include NewPing/examples/NewPingEventTimer/subdir.mk
 -include NewPing/examples/NewPing15Sensors/subdir.mk
 -include NewPing/subdir.mk
--include ArduinoThread/examples/StaticThreadController/subdir.mk
--include ArduinoThread/examples/SimpleThreadController/subdir.mk
--include ArduinoThread/examples/SimpleThread/subdir.mk
--include ArduinoThread/examples/SensorThread/subdir.mk
--include ArduinoThread/examples/CustomTimedThread/subdir.mk
--include ArduinoThread/examples/ControllerWithTimer/subdir.mk
--include ArduinoThread/examples/ControllerInController/subdir.mk
--include ArduinoThread/subdir.mk
 -include Adafruit_PWMServoDriver/examples/servo/subdir.mk
 -include Adafruit_PWMServoDriver/examples/pwmtest/subdir.mk
 -include Adafruit_PWMServoDriver/subdir.mk
@@ -67,7 +59,7 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 AR += \
-/Users/kevywilly/Documents/Robotics/workspace/Aragog/Release/arduino.ar \
+/Users/kevywilly/Documents/robotics/workspace/Aragog/Release/arduino.ar \
 
 ELF += \
 Aragog.elf \
@@ -83,19 +75,19 @@ all: Aragog
 Aragog: $(HEX)
 	@echo 'Building target: $@'
 	@echo 'Printing size:'
-	"/Applications/Eclipse.app/Contents/Eclipse//arduinoPlugin/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/bin/avr-size" -A "/Users/kevywilly/Documents/Robotics/workspace/Aragog/Release/Aragog.elf"
+	"/Applications/Eclipse.app/Contents/Eclipse//arduinoPlugin/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/bin/avr-size" -A "/Users/kevywilly/Documents/robotics/workspace/Aragog/Release/Aragog.elf"
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-/Users/kevywilly/Documents/Robotics/workspace/Aragog/Release/arduino.ar: $(AR_OBJ)
+/Users/kevywilly/Documents/robotics/workspace/Aragog/Release/arduino.ar: $(AR_OBJ)
 	@echo 'Starting archiver'
-	"/Applications/Eclipse.app/Contents/Eclipse//arduinoPlugin/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/bin/avr-gcc-ar" rcs    /Users/kevywilly/Documents/Robotics/workspace/Aragog/Release/arduino.ar $(AR_OBJ)
+	"/Applications/Eclipse.app/Contents/Eclipse//arduinoPlugin/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/bin/avr-gcc-ar" rcs    /Users/kevywilly/Documents/robotics/workspace/Aragog/Release/arduino.ar $(AR_OBJ)
 	@echo 'Finished building: $@'
 	@echo ' '
 
 Aragog.elf: $(LINK_OBJ) $(AR)
 	@echo 'Starting combiner'
-	"/Applications/Eclipse.app/Contents/Eclipse//arduinoPlugin/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/bin/avr-gcc" -Wall -Wextra -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=atmega32u4 -o "/Users/kevywilly/Documents/Robotics/workspace/Aragog/Release/Aragog.elf"   $(LINK_OBJ) $(AR)   /Users/kevywilly/Documents/Robotics/workspace/Aragog/Release/arduino.ar  "-L/Users/kevywilly/Documents/Robotics/workspace/Aragog/Release" -lm
+	"/Applications/Eclipse.app/Contents/Eclipse//arduinoPlugin/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/bin/avr-gcc" -Wall -Wextra -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=atmega32u4 -o "/Users/kevywilly/Documents/robotics/workspace/Aragog/Release/Aragog.elf"   $(LINK_OBJ) $(AR)   /Users/kevywilly/Documents/robotics/workspace/Aragog/Release/arduino.ar  "-L/Users/kevywilly/Documents/robotics/workspace/Aragog/Release" -lm
 	@echo 'Finished building: $@'
 	@echo ' '
 

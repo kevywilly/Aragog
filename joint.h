@@ -39,20 +39,16 @@ public:
 		step = 0;
 
 		cm = DEFAULT_LENGTH_CM;
-		base_angle = 0;
+		home_angle = 0;
 	}
 
 	void begin() {
 		gotoTarget();
 	}
 
-	void setBase() {
-		base_angle = target;
-	}
-
-	void setTarget(int8_t theta) {
-		previous_target = target;
-		setTarget(theta, DEFAULTSPEED);
+	void setTargetsAsHome() {
+		home_angle = target;
+		theta0 = target;
 	}
 
 	void setTarget(int8_t theta, uint8_t pspeed) {
@@ -133,24 +129,8 @@ public:
 		gotoTarget();
 	}
 
-	void revertTarget() {
-		setTarget(previous_target);
-	}
-
-	void revertTarget(uint8_t speed) {
-		setTarget(previous_target, speed);
-	}
-
-	void setDelta(int8_t theta) {
-		setTarget(theta, DEFAULTSPEED);
-	}
-
-	void setDelta(int8_t theta, uint8_t speed) {
-		setTarget(base_angle + theta, speed);
-	}
-
 	int8_t getDelta() {
-		return target - base_angle;
+		return target - home_angle;
 	}
 
 
@@ -198,13 +178,15 @@ public:
 		seekTarget(true);
 	}
 
-
+	void goHome(uint8_t speed) {
+		setTarget(home_angle, speed);
+	}
 
 private:
 
 	// baseAngle
 
-	int8_t base_angle;
+	int8_t home_angle;
 	// port id
 	uint8_t id;
 

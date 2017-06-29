@@ -39,14 +39,6 @@ SUBDIRS := \
 Adafruit_PWMServoDriver \
 Adafruit_PWMServoDriver/examples/pwmtest \
 Adafruit_PWMServoDriver/examples/servo \
-ArduinoThread \
-ArduinoThread/examples/ControllerInController \
-ArduinoThread/examples/ControllerWithTimer \
-ArduinoThread/examples/CustomTimedThread \
-ArduinoThread/examples/SensorThread \
-ArduinoThread/examples/SimpleThread \
-ArduinoThread/examples/SimpleThreadController \
-ArduinoThread/examples/StaticThreadController \
 NewPing \
 NewPing/examples/NewPing15Sensors \
 NewPing/examples/NewPingEventTimer \

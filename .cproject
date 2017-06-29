@@ -25,7 +25,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/libraries/Wire/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/Adafruit_PWMServoDriver}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/NewPing}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/ArduinoThread}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/RoboTools}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.cpp.sketch.input.1720152010" name="CPP source files" superClass="io.sloeber.compiler.cpp.sketch.input"/>
@@ -38,7 +37,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/libraries/Wire/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/Adafruit_PWMServoDriver}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/NewPing}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/ArduinoThread}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/RoboTools}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.c.sketch.input.684394687" name="C Source Files" superClass="io.sloeber.compiler.c.sketch.input"/>
@@ -51,7 +49,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/libraries/Wire/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/Adafruit_PWMServoDriver}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/NewPing}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/ArduinoThread}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Aragog/RoboTools}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.S.sketch.input.332221084" name="Assembly source files" superClass="io.sloeber.compiler.S.sketch.input"/>
