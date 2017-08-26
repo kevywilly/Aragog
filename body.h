@@ -35,23 +35,16 @@ public:
 	// ======================================= Members =====================================
 	Adafruit_PWMServoDriver pwm;
 
-	Leg leg1;
-	Leg leg2;
-	Leg leg3;
-	Leg leg4;
+	//Leg * leg1;
 	Leg * legs[4];
 
 	// ======================================= Constructor =====================================
-	Body(uint8T3_4 ids, floatT3_4 lengths) :
-			pwm(),
-			leg1(0, ids._1, lengths._1, 1, &pwm),
-			leg2(1, ids._2, lengths._2, 2, &pwm),
-			leg3(2,ids._3, lengths._3, 3, &pwm),
-			leg4(3, ids._4, lengths._4, 4, &pwm) {
-		legs[0] = &leg1;
-		legs[1] = &leg2;
-		legs[2] = &leg3;
-		legs[3] = &leg4;
+	Body(uint8T3_4 ids, floatT3_4 lengths) : pwm() {
+
+		legs[0] = new Leg(0, ids._1, lengths._1, 1, &pwm);
+		legs[1] = new Leg(1, ids._2, lengths._2, 2, &pwm);
+		legs[2] = new Leg(2,ids._3, lengths._3, 3, &pwm);
+		legs[3] = new Leg(3, ids._4, lengths._4, 4, &pwm);
 
 	}
 
@@ -199,22 +192,22 @@ public:
 	/*******************************************************************
 	* Finds the leg that is opposite of the leg provided
 	********************************************************************/
-	Leg opposite(Leg leg) {
-		return *legs[leg.index ^ 2];
+	Leg * opposite(Leg * leg) {
+		return legs[leg->index ^ 2];
 	}
 
 	/*******************************************************************
 	* Finds the leg that next to current leg (clockwise)
 	********************************************************************/
-	Leg cw(Leg leg) {
-		return (leg.index + 1 > 3) ? *legs[1] : *legs[leg.index+1];
+	Leg * cw(Leg * leg) {
+		return (leg->index + 1 > 3) ? legs[1] : legs[leg->index+1];
 	}
 
 	/*******************************************************************
 	* Finds the leg that next to current leg (counter clockwise)
 	********************************************************************/
-	Leg cc(Leg leg) {
-		return (leg.index - 1 < 0) ? *legs[3] : *legs[leg.index-1];
+	Leg * cc(Leg * leg) {
+		return (leg->index - 1 < 0) ? legs[3] : legs[leg->index-1];
 	}
 
 	/*******************************************************************

@@ -27,37 +27,37 @@ public:
 		baseRadius = getRadius();
 	}
 
-	float getRadius() const{
-			return this->coxa->radius+this->femur->y;
+		float getRadius() const{
+			return coxa->pos.radius+femur->pos.y;
 		}
 
 		float getX() const {
 			Pos2D p = Pos2D(getRadius(), 0);
-			p.setTheta(coxa->theta);
+			p.setTheta(coxa->pos.theta);
 			return p.x;
 		}
 
 		float getY() const {
-			return getRadius() + tibia->x;
+			return getRadius() + tibia->pos.x;
 		}
 
 		float getZ() const {
-			return femur->x;
+			return femur->pos.x;
 		}
 
 		void setX(float cm) {
 			Pos2D p = Pos2D(getRadius(), 0);
 			p.setX(cm);
-			coxa->setTheta(p.theta);
+			coxa->pos.setTheta(p.theta);
 		}
 
 		void setY(float cm) {
-			tibia->setX(cm);
+			tibia->pos.setX(cm);
 		}
 
 		void setZ(float cm) {
-			this->femur->setX(cm);
-			tibia->setTheta(femur->theta);
+			femur->pos.setX(cm);
+			tibia->pos.setTheta(femur->pos.theta);
 		}
 
 		void moveX(float dist) {
@@ -72,18 +72,18 @@ public:
 		void setXYZ(float x, float y, float z) {
 			setZ(z);
 			setX(x);
-			tibia->moveX(-y);
+			tibia->pos.moveX(-y);
 		}
 
 		void setYaw(float radians) {
-			coxa->setTheta(radians);
+			coxa->pos.setTheta(radians);
 		}
 
 		int8T3 getTargets(int quadrant) {
 			int8T3 targets = {0,0,0};
-			targets._1 = round((quadrant < 3) ? - (coxa->relativeTheta() * TO_DEG) : (coxa->relativeTheta() * TO_DEG));
-			targets._2 = round(femur->relativeTheta() * TO_DEG);
-			targets._3 = round(tibia->relativeTheta() * TO_DEG);
+			targets._1 = round((quadrant < 3) ? - (coxa->pos.relativeTheta() * TO_DEG) : (coxa->pos.relativeTheta() * TO_DEG));
+			targets._2 = round(femur->pos.relativeTheta() * TO_DEG);
+			targets._3 = round(tibia->pos.relativeTheta() * TO_DEG);
 			return targets;
 		}
 };

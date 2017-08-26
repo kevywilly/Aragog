@@ -14,7 +14,7 @@
 
 using namespace rt;
 
-class Joint : public Pos2D{
+class Joint {
 public:
 
 	const static uint16_t SERVOMIN = 143; // this is the 'minimum' pulse length count (out of 4096)
@@ -24,19 +24,22 @@ public:
 	const static int8_t ANGLEMIN = -90;
 	const static uint8_t CLOCKWISE = 1;
 	const static uint8_t COUNTERCLOCKWISE = -1;
-	const static uint16_t SEEKDELAYMICROS = 16000;
+	const static uint16_t SEEKDELAYMICROS = 12000;
 	const static uint8_t DEFAULTSPEED = 50;
 	const static uint8_t MAXSPEED = 100;
 	const static uint8_t MINSPEED = 0;
 	constexpr static float DEFAULT_LENGTH_CM = 50.0;
 
-	Joint(uint8_t pid, float _cm, Adafruit_PWMServoDriver * ppwm) : Pos2D(_cm,0.0){
+	Pos2D pos;
+
+	Joint(uint8_t pid, float _cm, Adafruit_PWMServoDriver * ppwm) : pos(_cm, 0.0){
 		pwm = ppwm;
 		id = pid;
 		offset = 0;
 		target = 0;
 		current = 0;
 		step = 0;
+		//pos = new Pos2D(_cm,0.0);
 
 		cm = DEFAULT_LENGTH_CM;
 		home_angle = 0;
@@ -48,7 +51,7 @@ public:
 
 	void setTargetsAsHome() {
 		home_angle = target;
-		theta0 = target;
+		//Pos2D pos(cm, home_angle);
 	}
 
 	void setTarget(int8_t theta, uint8_t pspeed) {
@@ -57,7 +60,7 @@ public:
 		uint8_t speed = max(min(pspeed, MAXSPEED), MINSPEED);
 
 		// get safe target angle
-		target = safeAngle(theta);
+		target = safeAngle(theta+home_angle);
 
 		// what is the difference
 		int diff = (target - current);

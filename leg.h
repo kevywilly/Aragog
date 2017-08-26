@@ -25,10 +25,10 @@ public:
 	enum Side {Left, Right};
 
 	int index;
-	Joint coxa;
-	Joint femur;
-	Joint tibia;
-	Knee knee;
+	Joint * coxa;
+	Joint * femur;
+	Joint * tibia;
+	Knee * knee;
 
 	int8_t quadrant;
 	int8_t original_quadrant;
@@ -36,15 +36,17 @@ public:
 	Joint * joints[3];
 
 	Leg(int idx, uint8T3 ids, floatT3 lengths, uint8_t quad,
-			Adafruit_PWMServoDriver * ppwm) :
-			coxa(ids._1, lengths._1, ppwm), femur(ids._2, lengths._2, ppwm), tibia(
-					ids._3, lengths._3, ppwm), knee(&coxa, &femur, &tibia) {
+			Adafruit_PWMServoDriver * ppwm) {
 
+		coxa = new Joint(ids._1, lengths._1, ppwm);
+		femur = new Joint(ids._2, lengths._2, ppwm);
+		tibia = new Joint(ids._3, lengths._3, ppwm);
+		knee = new Knee(coxa, femur, tibia);
 		//body = pbody;
 		index = idx;
-		joints[0] = &coxa;
-		joints[1] = &femur;
-		joints[2] = &tibia;
+		joints[0] = coxa;
+		joints[1] = femur;
+		joints[2] = tibia;
 		quadrant = quad;
 		original_quadrant = quad;
 
@@ -105,8 +107,9 @@ public:
 
 
 	int8T3 getDeltas() {
-		return {coxa.getDelta(), femur.getDelta(), coxa.getDelta()};
+		return {coxa->getDelta(), femur->getDelta(), coxa->getDelta()};
 	}
+
 	void setTargetsInterpolation(int8T3 thetas, uint8T3 speeds) {
 
 		for (int i = 0; i < 3; i++) {
@@ -200,47 +203,62 @@ public:
 	}
 
 	void setX(float cm, uint8_t speed) {
-		knee.setX(cm);
-		setTargets(knee.getTargets(this->quadrant), speed);
+		knee->setX(cm);
+		setTargets(knee->getTargets(this->quadrant), speed);
 	}
 
 	void moveX(float cm, uint8_t speed) {
-		setX(cm + knee.getX(), speed);
+		setX(cm + knee->getX(), speed);
 	}
 
 	void setY(float cm, uint8_t speed) {
-		knee.setY(cm);
-		setTargets(knee.getTargets(this->quadrant), speed);
+		knee->setY(cm);
+		setTargets(knee->getTargets(this->quadrant), speed);
 	}
 
 	void moveZ(float cm, uint8_t speed) {
-		knee.setZ(cm + knee.getZ());
-		setTargets(knee.getTargets(this->quadrant), speed);
+		knee->setZ(cm + knee->getZ());
+		setTargets(knee->getTargets(this->quadrant), speed);
 	}
 	void setZ(float cm, int8_t speed) {
-		knee.setZ(cm);
-		setTargets(knee.getTargets(this->quadrant), speed);
+		knee->setZ(cm);
+		setTargets(knee->getTargets(this->quadrant), speed);
 	}
 
 	// set x and z coordinates
 	void setXZ(float x, float z, int8_t speed) {
-		knee.setXZ(x,z);
-		setTargets(knee.getTargets(this->quadrant), speed);
+		knee->setXZ(x,z);
+		setTargets(knee->getTargets(this->quadrant), speed);
 	}
 	/**
 	 * Set XYZ position of leg (knee and foot)
 	 */
 	void setXYZ(float cm_x, float cm_y, float cm_z, uint8_t speed) {
-		knee.setXYZ(cm_x, cm_y, cm_z);
-		setTargets(knee.getTargets(this->quadrant), speed);
+		knee->setXYZ(cm_x, cm_y, cm_z);
+		setTargets(knee->getTargets(this->quadrant), speed);
 	}
 
+	void cw(float radians, uint8_t speed) {
+		if(quadrant < 3) {
+			setYaw(radians, speed);
+		} else {
+			setYaw(-radians, speed);
+		}
+	}
+
+	void ccw(float radians, uint8_t speed) {
+			if(quadrant < 3) {
+				setYaw(-radians, speed);
+			} else {
+				setYaw(radians, speed);
+			}
+		}
 	/**
 	 * Set yaw in radians
 	 */
 	void setYaw(float radians, uint8_t speed) {
-		knee.setYaw(radians);
-		setTargets(knee.getTargets(this->quadrant), speed);
+		knee->setYaw(radians);
+		setTargets(knee->getTargets(this->quadrant), speed);
 	}
 
 	void resetQuadrant() {
