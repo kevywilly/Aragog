@@ -79,8 +79,8 @@ public:
 			coxa->pos.setTheta(radians);
 		}
 
-		int8T3 getTargets(int quadrant) {
-			int8T3 targets = {0,0,0};
+		int8_x3_t getTargets(int quadrant) {
+			int8_x3_t targets = {0,0,0};
 			targets._1 = round((quadrant < 3) ? - (coxa->pos.relativeTheta() * TO_DEG) : (coxa->pos.relativeTheta() * TO_DEG));
 			targets._2 = round(femur->pos.relativeTheta() * TO_DEG);
 			targets._3 = round(tibia->pos.relativeTheta() * TO_DEG);

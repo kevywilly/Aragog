@@ -39,7 +39,7 @@ public:
 	Leg * legs[4];
 
 	// ======================================= Constructor =====================================
-	Body(uint8T3_4 ids, floatT3_4 lengths) : pwm() {
+	Body(uint8_3x4_t ids, float3x4_t lengths) : pwm() {
 
 		legs[0] = new Leg(0, ids._1, lengths._1, 1, &pwm);
 		legs[1] = new Leg(1, ids._2, lengths._2, 2, &pwm);
@@ -75,10 +75,10 @@ public:
 	/*******************************************************************
 	* Set targets for all legs and joints
 	********************************************************************/
-	void setTargets(int8T3_4 thetas, uint8_t speed) {
+	void setTargets(int8_3x4_t thetas, uint8_t speed) {
 
 		for(int i = 0; i < 4; i++) {
-			legs[i]->setTargets(thetas.get(i), speed);
+			legs[i]->setTargets(thetas.at(i), speed);
 		}
 
 	}
@@ -86,10 +86,10 @@ public:
 	/*******************************************************************
 	* Set Targets for all legs and joints with different speeds
 	********************************************************************/
-	void setTargetsInterpolation(int8T3_4 thetas, uint8T3_4 speed) {
+	void setTargetsInterpolation(int8_3x4_t thetas, uint8_3x4_t speed) {
 
 		for(int i = 0; i < 4; i++) {
-					legs[i]->setTargetsInterpolation(thetas.get(i), speed.get(i));
+					legs[i]->setTargetsInterpolation(thetas.at(i), speed.at(i));
 				}
 	}
 
@@ -114,10 +114,10 @@ public:
 	/*******************************************************************
 	* Let angle offsets for all joints for consistent shape
 	********************************************************************/
-	void setOffsets(int8T3_4 offsets) {
+	void setOffsets(int8_3x4_t offsets) {
 
 		for(int i = 0; i < 4; i++) {
-			legs[i]->setOffsets(offsets.get(i));
+			legs[i]->setOffsets(offsets.at(i));
 		}
 	}
 
@@ -164,9 +164,9 @@ public:
 	/*******************************************************************
 	* All joints go immediately to the specified angles
 	********************************************************************/
-	void gotoAngles(int8T3_4 thetas) {
+	void gotoAngles(int8_3x4_t thetas) {
 		for(int i=0; i < 4; i++) {
-			legs[i]->gotoAngles(thetas.get(i));
+			legs[i]->gotoAngles(thetas.at(i));
 		}
 	}
 
@@ -185,7 +185,7 @@ public:
 	********************************************************************/
 	void setQuadrants(tuple4<uint8_t> quads) {
 		for(int i=0; i < 4; i++) {
-			legs[i]->quadrant = quads.get(i);
+			legs[i]->quadrant = quads.at(i);
 		}
 	}
 
@@ -230,7 +230,23 @@ public:
 		}
 	}
 
+	/*******************************************************************
+	* Set speed for all legs
+	********************************************************************/
+	void pos(float3x4_t pos) {
+		for(int i=0; i < 4; i++) {
+			legs[i]->pos(pos.at(i));
+		}
+	}
 
+	/*******************************************************************
+	* Set speed for all legs
+	********************************************************************/
+	void setSpeed(uint8_t speed) {
+		for(int i=0; i < 4; i++) {
+			legs[i]->setSpeed(speed);
+		}
+	}
 
 };
 
