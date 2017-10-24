@@ -8,7 +8,6 @@
 #ifndef BODY_H_
 #define BODY_H_
 #include "Arduino.h"
-#include "RoboTools.h"
 #include "constants.h"
 #include "leg.h"
 #include <Adafruit_PWMServoDriver.h>
@@ -22,12 +21,6 @@
 
 #define DEFAULT_PWM_FREQUENCY 50
 
-using namespace rt;
-
-
-
-class Body;
-
 class Body {
 
 public:
@@ -39,7 +32,7 @@ public:
 	Leg * legs[4];
 
 	// ======================================= Constructor =====================================
-	Body(uint8_3x4_t ids, float3x4_t lengths) : pwm() {
+	Body(uint8T3_4 ids, floatT3_4 lengths) : pwm() {
 
 		legs[0] = new Leg(0, ids._1, lengths._1, 1, &pwm);
 		legs[1] = new Leg(1, ids._2, lengths._2, 2, &pwm);
@@ -75,7 +68,7 @@ public:
 	/*******************************************************************
 	* Set targets for all legs and joints
 	********************************************************************/
-	void setTargets(int8_3x4_t thetas, uint8_t speed) {
+	void setTargets(int8T3_4 thetas, uint8_t speed) {
 
 		for(int i = 0; i < 4; i++) {
 			legs[i]->setTargets(thetas.at(i), speed);
@@ -86,7 +79,7 @@ public:
 	/*******************************************************************
 	* Set Targets for all legs and joints with different speeds
 	********************************************************************/
-	void setTargetsInterpolation(int8_3x4_t thetas, uint8_3x4_t speed) {
+	void setTargetsInterpolation(int8T3_4 thetas, uint8T3_4 speed) {
 
 		for(int i = 0; i < 4; i++) {
 					legs[i]->setTargetsInterpolation(thetas.at(i), speed.at(i));
@@ -114,7 +107,7 @@ public:
 	/*******************************************************************
 	* Let angle offsets for all joints for consistent shape
 	********************************************************************/
-	void setOffsets(int8_3x4_t offsets) {
+	void setOffsets(int8T3_4 offsets) {
 
 		for(int i = 0; i < 4; i++) {
 			legs[i]->setOffsets(offsets.at(i));
@@ -164,7 +157,7 @@ public:
 	/*******************************************************************
 	* All joints go immediately to the specified angles
 	********************************************************************/
-	void gotoAngles(int8_3x4_t thetas) {
+	void gotoAngles(int8T3_4 thetas) {
 		for(int i=0; i < 4; i++) {
 			legs[i]->gotoAngles(thetas.at(i));
 		}
@@ -233,7 +226,7 @@ public:
 	/*******************************************************************
 	* Set speed for all legs
 	********************************************************************/
-	void pos(float3x4_t pos) {
+	void pos(floatT3_4 pos) {
 		for(int i=0; i < 4; i++) {
 			legs[i]->pos(pos.at(i));
 		}

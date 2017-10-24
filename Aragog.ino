@@ -1,26 +1,27 @@
 #include "Aragog.h"
 #include "stdlib.h"
+#include "rttypes.h"
 
-const int8_3x4_t P_STAND = int8_x3_t( { 0, 0, 0 }).toT3_4();
-const int8_3x4_t P_WALK = int8_x3_t( { 0, 40, 42 }).toT3_4();
-const int8_3x4_t P_SIT = int8_x3_t( { 0, 60, 70 }).toT3_4();
-const int8_3x4_t P_OFFSETS = {{ 0, 5, 0 },{ 0, 0, -5 },{ 0, 0, 3 },{ 0, 5, -5 }};
-const int8_3x4_t P_LOW_WALK = int8_x3_t( { 0, 70, 70 }).toT3_4();
+const int8T3_4 P_STAND = int8T3( { 0, 0, 0 }).toT3_4();
+const int8T3_4 P_WALK = int8T3( { 0, 40, 42 }).toT3_4();
+const int8T3_4 P_SIT = int8T3( { 0, 60, 70 }).toT3_4();
+const int8T3_4 P_OFFSETS = {{ 0, 5, 0 },{ 0, 0, -5 },{ 0, 0, 3 },{ 0, 5, -5 }};
+const int8T3_4 P_LOW_WALK = int8T3( { 0, 70, 70 }).toT3_4();
 
 const uint8_t current_speed = 5;
 
 //up down
 void UpDownDemo() {
 	for(int i=0; i<4; i++) {
-		body.legs[i]->setZ(-5.0,2);
+		body.legs[i]->setZAdj(-5.0,2);
 	}
 	go();
 	for(int i=0; i<4; i++) {
-		body.legs[i]->setZ(5.0,2);
+		body.legs[i]->setZAdj(5.0,2);
 	}
 	go();
 	for(int i=0; i<4; i++) {
-			body.legs[i]->setZ(0.0,2);
+			body.legs[i]->setZAdj(0.0,2);
 		}
 	go();
 }
@@ -32,6 +33,30 @@ void WalkDemo() {
 	}
 }
 
+void ShiftDemo() {
+
+	// Shift
+	body.legs[0]->setXYZ(   0, -3.5,	0, 	2);
+	body.legs[2]->setXYZ(   0,	3.5,	0,	2);
+	body.legs[1]->setXYZ(-4.0,	  0,	0,	2);
+	body.legs[3]->setXYZ(-4.0,	  0,    0,  2);
+	go();
+
+	// Step
+	body.legs[2]->setXYZ(0, 3.5, 5.0, 2);
+	go();
+	body.legs[2]->setXYZ(5.0, -7, 5.0, 2);
+	go();
+
+
+	body.legs[0]->setXYZ(   0, 	  0,	0, 	2);
+	body.legs[2]->setXYZ( 5.0,	  0,	0,	2);
+	body.legs[1]->setXYZ(   0,	  0,	0,	2);
+	body.legs[3]->setXYZ(   0,	  0,    0,  2);
+	go();
+
+
+}
 void setup() {
 
 	Serial.begin(115200);
@@ -42,6 +67,9 @@ void setup() {
 	body.begin();
 
 	delay(2000);
+
+	//UpDownDemo();
+	ShiftDemo();
 
 	/*
 	for(int i=0; i < 5; i++) {
@@ -60,7 +88,7 @@ void setup() {
 void loop() {
 
 	//walker();
-	walkToward(Heading::North, current_speed);
+	//walkToward(Heading::North, current_speed);
 
 }
 

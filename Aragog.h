@@ -9,12 +9,12 @@
 #define ARAGOG_H_
 
 #include "Arduino.h"
-#include "RoboTools.h"
 #include "constants.h"
 #include "body.h"
 #include "leg.h"
 #include "sonar.h"
 #include "stdio.h"
+#include "rttypes.h"
 
 #define SONAR_TRIGGER_PIN 9
 #define SONAR_ECHO_PIN 8
@@ -37,8 +37,8 @@ enum Heading {
 //////////////////////////// Define Joint Lengths and PWM Ids ///////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-const float3x4_t kJointLengths = float_x3_t( { 6.0, 5.2, 8.9 }).toT3_4();
-const uint8_3x4_t kJointPwmPins = { { 0, 4, 8 }, { 1, 5, 9 }, { 2, 6, 10 },{ 3, 7, 11 } };
+const floatT3_4 kJointLengths = floatT3( { 6.0, 5.2, 8.9 }).toT3_4();
+const uint8T3_4 kJointPwmPins = { { 0, 4, 8 }, { 1, 5, 9 }, { 2, 6, 10 },{ 3, 7, 11 } };
 
 Sonar SonarSensor(SONAR_TRIGGER_PIN, SONAR_ECHO_PIN, SONAR_MAX_DISTANCE, SONAR_TOO_CLOSE);
 
@@ -247,11 +247,11 @@ bool steps(Leg * first, Leg * second, uint8_t speed) {
 		// 7: Second Stepping Leg set to 0 Height,
 		//    and Move it Back to Default Position
 
-		l1->setXYZ(0,0,0, speed);
-		oppL1->setXYZ(0,0,0, speed);
+		l1->setXYZadj(0,0,0, speed);
+		oppL1->setXYZadj(0,0,0, speed);
 
-		l2->setXYZ(0,0,0, speed);
-		oppL2->setXYZ(0,0,0, speed);
+		l2->setXYZadj(0,0,0, speed);
+		oppL2->setXYZadj(0,0,0, speed);
 
 		go();
 
@@ -282,7 +282,7 @@ void turn(float degrees, uint8_t speed) {
 		body.legs[i]->up(stepHeight, speed);
 		go();
 
-		body.legs[i]->cw(degrees*TO_RAD, speed);
+		body.legs[i]->cw(radians(degrees), speed);
 		go();
 
 		body.legs[i]->down(0, 5);

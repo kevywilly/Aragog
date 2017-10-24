@@ -42,11 +42,6 @@
 			<location>/Users/kevywilly/Documents/Arduino/libraries/NewPing</location>
 		</link>
 		<link>
-			<name>RoboTools</name>
-			<type>2</type>
-			<locationURI>WORKSPACE_LOC/RoboTools</locationURI>
-		</link>
-		<link>
 			<name>core/core</name>
 			<type>2</type>
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/cores/arduino</locationURI>

@@ -9,10 +9,9 @@
 #define JOINT_H_
 
 #include <Adafruit_PWMServoDriver.h>
-#include "RoboTools.h"
 #include <Wire.h>
+#include "pos2d.h"
 
-using namespace rt;
 
 class Joint {
 public:

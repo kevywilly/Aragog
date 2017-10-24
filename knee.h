@@ -8,8 +8,9 @@
 #ifndef KNEE_H_
 #define KNEE_H_
 
+#include "Arduino.h"
 #include "joint.h"
-#include "RoboTools.h"
+#include "rttypes.h"
 
 class Knee {
 public:
@@ -57,6 +58,10 @@ public:
 
 		void setZ(float cm) {
 			femur->pos.setX(cm);
+		}
+
+		void setZadj(float cm) {
+			femur->pos.setX(cm);
 			tibia->pos.setTheta(femur->pos.theta);
 		}
 
@@ -69,21 +74,22 @@ public:
 			setZ(z);
 			setX(x);
 		}
-		void setXYZ(float x, float y, float z) {
-			setZ(z);
+
+		void setXZadj(float x, float z) {
+			setZadj(z);
 			setX(x);
-			tibia->pos.moveX(-y);
 		}
+
 
 		void setYaw(float radians) {
 			coxa->pos.setTheta(radians);
 		}
 
-		int8_x3_t getTargets(int quadrant) {
-			int8_x3_t targets = {0,0,0};
-			targets._1 = round((quadrant < 3) ? - (coxa->pos.relativeTheta() * TO_DEG) : (coxa->pos.relativeTheta() * TO_DEG));
-			targets._2 = round(femur->pos.relativeTheta() * TO_DEG);
-			targets._3 = round(tibia->pos.relativeTheta() * TO_DEG);
+		int8T3 getTargets(int quadrant) {
+			int8T3 targets = {0,0,0};
+			targets._1 = round((quadrant < 3) ? - degrees(coxa->pos.relativeTheta()) : degrees(coxa->pos.relativeTheta()));
+			targets._2 = round(degrees(femur->pos.relativeTheta()));
+			targets._3 = round(degrees(tibia->pos.relativeTheta()));
 			return targets;
 		}
 };

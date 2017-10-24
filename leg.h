@@ -9,14 +9,11 @@
 #define LEG_H_
 
 #include "Arduino.h"
-#include "RoboTools.h"
 #include "joint.h"
 #include <Adafruit_PWMServoDriver.h>
 #include "knee.h"
 #include <math.h>
-
-using namespace rt;
-
+#include "pos2d.h"
 
 
 class Leg {
@@ -37,7 +34,7 @@ public:
 
 
 
-	Leg(int idx, uint8_x3_t ids, float_x3_t lengths, uint8_t quad,
+	Leg(int idx, uint8T3 ids, floatT3 lengths, uint8_t quad,
 			Adafruit_PWMServoDriver * ppwm) {
 
 		coxa = new Joint(ids._1, lengths._1, ppwm);
@@ -96,24 +93,24 @@ public:
 		return true;
 	}
 
-	void setTargets(int8_x3_t thetas) {
+	void setTargets(int8T3 thetas) {
 		setTargets(thetas, Joint::DEFAULTSPEED);
 	}
 
 
 
-	void setTargets(int8_x3_t thetas, uint8_t speed) {
+	void setTargets(int8T3 thetas, uint8_t speed) {
 		for (int i = 0; i < 3; i++) {
 			joints[i]->setTarget(thetas.at(i), speed);
 		}
 	}
 
 
-	int8_x3_t getDeltas() {
+	int8T3 getDeltas() {
 		return {coxa->getDelta(), femur->getDelta(), coxa->getDelta()};
 	}
 
-	void setTargetsInterpolation(int8_x3_t thetas, uint8_x3_t speeds) {
+	void setTargetsInterpolation(int8T3 thetas, uint8T3 speeds) {
 
 		for (int i = 0; i < 3; i++) {
 			joints[i]->setTarget(thetas.at(i), speeds.at(i));
@@ -139,7 +136,7 @@ public:
 		}
 	}
 
-	void gotoAngles(int8_x3_t thetas) {
+	void gotoAngles(int8T3 thetas) {
 
 		for (int i = 0; i < 3; i++) {
 			joints[i]->gotoAngle(thetas.at(i));
@@ -158,7 +155,7 @@ public:
 		}
 	}
 
-	void setOffsets(int8_x3_t offsets) {
+	void setOffsets(int8T3 offsets) {
 
 		for (int i = 0; i < 3; i++) {
 			joints[i]->setOffset(offsets.at(i));
@@ -175,7 +172,7 @@ public:
 	/**
 	 * Set length in centimeters for all joints in leg
 	 */
-	void setCM(float_x3_t cms) {
+	void setCM(floatT3 cms) {
 		for (int i = 0; i < 3; i++) {
 			joints[i]->setCM(cms.at(i));
 		}
@@ -198,11 +195,11 @@ public:
 	}
 
 	inline void up(float cm, uint8_t speed) {
-		setZ(cm, speed);
+		setZAdj(cm, speed);
 	}
 
 	inline void down(float cm, uint8_t speed) {
-		setZ(-cm, speed);
+		setZAdj(-cm, speed);
 	}
 
 	void setX(float cm, uint8_t speed) {
@@ -220,31 +217,44 @@ public:
 	}
 
 	void moveZ(float cm, uint8_t speed) {
-		knee->setZ(cm + knee->getZ());
+		knee->setZadj(cm + knee->getZ());
 		setTargets(knee->getTargets(this->quadrant), speed);
 	}
+
 	void setZ(float cm, int8_t speed) {
-		knee->setZ(cm);
+			knee->setZ(cm);
+			setTargets(knee->getTargets(this->quadrant), speed);
+		}
+
+	void setZAdj(float cm, int8_t speed) {
+		knee->setZadj(cm);
 		setTargets(knee->getTargets(this->quadrant), speed);
 	}
 
 	// set x and z coordinates
-	void setXZ(float x, float z, int8_t speed) {
-		knee->setXZ(x,z);
+	void setXZAdj(float x, float z, int8_t speed) {
+		knee->setXZadj(x,z);
 		setTargets(knee->getTargets(this->quadrant), speed);
 	}
 	/**
 	 * Set XYZ position of leg (knee and foot)
 	 */
-	void setXYZ(float cm_x, float cm_y, float cm_z, uint8_t speed) {
+	void setXYZadj(float cm_x, float cm_y, float cm_z, uint8_t speed) {
 		knee->setX(cm_x);
-		knee->setZ(cm_z);
+		knee->setZadj(cm_z);
 		knee->setY(-cm_y);
 		setTargets(knee->getTargets(this->quadrant), speed);
 	}
 
+	void setXYZ(float cm_x, float cm_y, float cm_z, uint8_t speed) {
+			knee->setX(cm_x);
+			knee->setZ(cm_z);
+			knee->setY(-cm_y);
+			setTargets(knee->getTargets(this->quadrant), speed);
+		}
+
 	void pos(tuple3<float> p) {
-		setXYZ(p._1, p._2, p._3, speed_);
+		setXYZadj(p._1, p._2, p._3, speed_);
 	}
 
 	void cw(float radians, uint8_t speed) {
