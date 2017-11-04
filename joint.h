@@ -10,7 +10,7 @@
 
 #include <Adafruit_PWMServoDriver.h>
 #include <Wire.h>
-#include "pos2d.h"
+
 
 
 class Joint {
@@ -29,16 +29,14 @@ public:
 	const static uint8_t MINSPEED = 0;
 	constexpr static float DEFAULT_LENGTH_CM = 50.0;
 
-	Pos2D pos;
 
-	Joint(uint8_t pid, float _cm, Adafruit_PWMServoDriver * ppwm) : pos(_cm, 0.0){
+	Joint(uint8_t pid, float _cm, Adafruit_PWMServoDriver * ppwm) {
 		pwm = ppwm;
 		id = pid;
 		offset = 0;
 		target = 0;
 		current = 0;
 		step = 0;
-		//pos = new Pos2D(_cm,0.0);
 
 		cm = DEFAULT_LENGTH_CM;
 		home_angle = 0;
@@ -53,7 +51,7 @@ public:
 		//Pos2D pos(cm, home_angle);
 	}
 
-	void setTarget(int8_t theta, uint8_t pspeed) {
+	void setTarget(int theta, uint8_t pspeed) {
 
 		// get safe speed
 		uint8_t speed = max(min(pspeed, MAXSPEED), MINSPEED);

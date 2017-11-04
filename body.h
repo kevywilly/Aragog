@@ -68,7 +68,7 @@ public:
 	/*******************************************************************
 	* Set targets for all legs and joints
 	********************************************************************/
-	void setTargets(int8T3_4 thetas, uint8_t speed) {
+	void setTargets(intT3_4 thetas, uint8_t speed) {
 
 		for(int i = 0; i < 4; i++) {
 			legs[i]->setTargets(thetas.at(i), speed);
@@ -107,7 +107,7 @@ public:
 	/*******************************************************************
 	* Let angle offsets for all joints for consistent shape
 	********************************************************************/
-	void setOffsets(int8T3_4 offsets) {
+	void setOffsets(intT3_4 offsets) {
 
 		for(int i = 0; i < 4; i++) {
 			legs[i]->setOffsets(offsets.at(i));
@@ -226,19 +226,32 @@ public:
 	/*******************************************************************
 	* Set speed for all legs
 	********************************************************************/
-	void pos(floatT3_4 pos) {
-		for(int i=0; i < 4; i++) {
-			legs[i]->pos(pos.at(i));
-		}
-	}
-
-	/*******************************************************************
-	* Set speed for all legs
-	********************************************************************/
 	void setSpeed(uint8_t speed) {
 		for(int i=0; i < 4; i++) {
 			legs[i]->setSpeed(speed);
 		}
+	}
+
+	void setIK(float x, float y, float z) {
+		for(int i=0; i < 4; i++) {
+			legs[i]->setIK(x,y,z);
+		}
+	}
+
+	void setIKOffset(float x, float y, float z) {
+			for(int i=0; i < 4; i++) {
+				legs[i]->setIKOffset(x,y,z);
+			}
+	}
+
+	void seekIK(float x, float y, float z) {
+		setIK(x,y,z);
+		moveTillTargetsReached();
+	}
+
+	void seekIKOffset(float x, float y, float z) {
+		setIKOffset(x,y,z);
+		moveTillTargetsReached();
 	}
 
 };

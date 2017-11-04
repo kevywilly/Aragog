@@ -17,7 +17,7 @@
  /Users/kevywilly/Documents/Arduino/libraries/Adafruit_PWMServoDriver/Adafruit_PWMServoDriver.h \
  /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/libraries/Wire/src/Wire.h \
  /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/cores/arduino/Stream.h \
- ../pos2d.h ../knee.h ../rttypes.h ../sonar.h \
+ ../ik.h ../rttypes.h ../sonar.h \
  /Users/kevywilly/Documents/Arduino/libraries/NewPing/NewPing.h \
  ../Aragog.ino
 
@@ -65,9 +65,7 @@
 
 /Applications/Eclipse.app/Contents/Eclipse/arduinoPlugin/packages/arduino/hardware/avr/1.6.19/cores/arduino/Stream.h:
 
-../pos2d.h:
-
-../knee.h:
+../ik.h:
 
 ../rttypes.h:
 

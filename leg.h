@@ -11,10 +11,9 @@
 #include "Arduino.h"
 #include "joint.h"
 #include <Adafruit_PWMServoDriver.h>
-#include "knee.h"
 #include <math.h>
-#include "pos2d.h"
-
+#include "ik.h"
+#include "rttypes.h"
 
 class Leg {
 public:
@@ -25,12 +24,13 @@ public:
 	Joint * coxa;
 	Joint * femur;
 	Joint * tibia;
-	Knee * knee;
 
 	int8_t quadrant;
 	int8_t original_quadrant;
 
 	Joint * joints[3];
+
+	IK * ik;
 
 
 
@@ -40,7 +40,9 @@ public:
 		coxa = new Joint(ids._1, lengths._1, ppwm);
 		femur = new Joint(ids._2, lengths._2, ppwm);
 		tibia = new Joint(ids._3, lengths._3, ppwm);
-		knee = new Knee(coxa, femur, tibia);
+
+		ik = new IK(lengths._1, lengths._2, lengths._3);
+
 		//body = pbody;
 		index = idx;
 		joints[0] = coxa;
@@ -50,6 +52,17 @@ public:
 		original_quadrant = quad;
 		speed_ = 4;
 
+	}
+
+	void setIK(float x, float y, float z) {
+		ik->solveForXyz(x,y,z);
+		setTargets({ik->a, ik->b, ik->c});
+	}
+
+
+	void setIKOffset(float x, float y, float z) {
+		ik->solveForXyzOffset(x,y,z);
+		setTargets({ik->a, ik->b, ik->c});
 	}
 
 	/**
@@ -93,13 +106,13 @@ public:
 		return true;
 	}
 
-	void setTargets(int8T3 thetas) {
+	void setTargets(intT3 thetas) {
 		setTargets(thetas, Joint::DEFAULTSPEED);
 	}
 
 
 
-	void setTargets(int8T3 thetas, uint8_t speed) {
+	void setTargets(intT3 thetas, uint8_t speed) {
 		for (int i = 0; i < 3; i++) {
 			joints[i]->setTarget(thetas.at(i), speed);
 		}
@@ -155,129 +168,23 @@ public:
 		}
 	}
 
-	void setOffsets(int8T3 offsets) {
+	void setOffsets(intT3 offsets) {
 
 		for (int i = 0; i < 3; i++) {
 			joints[i]->setOffset(offsets.at(i));
 		}
 	}
 
-
-
-	 void goHome(uint8_t speed) {
+	void goHome(uint8_t speed) {
 			 for(int i=0; i < 3; i++) {
 				 joints[i]->goHome(speed);
 			 }
 		 }
-	/**
-	 * Set length in centimeters for all joints in leg
-	 */
+
 	void setCM(floatT3 cms) {
 		for (int i = 0; i < 3; i++) {
 			joints[i]->setCM(cms.at(i));
 		}
-	}
-
-	inline void forward(float dist, uint8_t speed) {
-		setX(dist, speed);
-	}
-
-	inline void backward(float dist, uint8_t speed) {
-		setX(-dist, speed);
-	}
-
-	inline void in(float dist, uint8_t speed) {
-		setY(dist, speed);
-	}
-
-	inline void out(float dist, uint8_t speed) {
-		setY(-dist, speed);
-	}
-
-	inline void up(float cm, uint8_t speed) {
-		setZAdj(cm, speed);
-	}
-
-	inline void down(float cm, uint8_t speed) {
-		setZAdj(-cm, speed);
-	}
-
-	void setX(float cm, uint8_t speed) {
-		knee->setX(cm);
-		setTargets(knee->getTargets(this->quadrant), speed);
-	}
-
-	void moveX(float cm, uint8_t speed) {
-		setX(cm + knee->getX(), speed);
-	}
-
-	void setY(float cm, uint8_t speed) {
-		knee->setY(cm);
-		setTargets(knee->getTargets(this->quadrant), speed);
-	}
-
-	void moveZ(float cm, uint8_t speed) {
-		knee->setZadj(cm + knee->getZ());
-		setTargets(knee->getTargets(this->quadrant), speed);
-	}
-
-	void setZ(float cm, int8_t speed) {
-			knee->setZ(cm);
-			setTargets(knee->getTargets(this->quadrant), speed);
-		}
-
-	void setZAdj(float cm, int8_t speed) {
-		knee->setZadj(cm);
-		setTargets(knee->getTargets(this->quadrant), speed);
-	}
-
-	// set x and z coordinates
-	void setXZAdj(float x, float z, int8_t speed) {
-		knee->setXZadj(x,z);
-		setTargets(knee->getTargets(this->quadrant), speed);
-	}
-	/**
-	 * Set XYZ position of leg (knee and foot)
-	 */
-	void setXYZadj(float cm_x, float cm_y, float cm_z, uint8_t speed) {
-		knee->setX(cm_x);
-		knee->setZadj(cm_z);
-		knee->setY(-cm_y);
-		setTargets(knee->getTargets(this->quadrant), speed);
-	}
-
-	void setXYZ(float cm_x, float cm_y, float cm_z, uint8_t speed) {
-			knee->setX(cm_x);
-			knee->setZ(cm_z);
-			knee->setY(-cm_y);
-			setTargets(knee->getTargets(this->quadrant), speed);
-		}
-
-	void pos(tuple3<float> p) {
-		setXYZadj(p._1, p._2, p._3, speed_);
-	}
-
-	void cw(float radians, uint8_t speed) {
-		if(quadrant < 3) {
-			setYaw(radians, speed);
-		} else {
-			setYaw(-radians, speed);
-		}
-	}
-
-	void ccw(float radians, uint8_t speed) {
-			if(quadrant < 3) {
-				setYaw(-radians, speed);
-			} else {
-				setYaw(radians, speed);
-			}
-		}
-	/**
-	 * Set yaw in radians
-	 */
-	void setYaw(float radians, uint8_t speed) {
-		knee->setYaw(radians);
-		setTargets(knee->getTargets(this->quadrant), speed);
 	}
 
 	void resetQuadrant() {
@@ -287,6 +194,7 @@ public:
 	void setSpeed(uint8_t speed) {
 		speed_ = speed;
 	}
+
 private:
 	uint8_t speed_;
 
